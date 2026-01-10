@@ -349,6 +349,31 @@
       
       if (navigator.onLine) {
         try {
+          // First lookup the student to check class
+          const lookupUrl = `${API_URL}?action=lookup&tagId=${encodeURIComponent(tagId)}`;
+          const lookupResponse = await fetch(lookupUrl);
+          const lookupResult = await lookupResponse.json();
+          
+          if (!lookupResult.success) {
+            if (lookupResult.error === 'Tag not found') {
+              showStatus('error', 'Unknown Tag', '', 'Tag not registered');
+            } else {
+              showStatus('error', 'Error', '', lookupResult.error || 'Lookup failed');
+            }
+            clearTimer = setTimeout(resetDisplay, 4000);
+            return;
+          }
+          
+          // Check class mismatch
+          const student = lookupResult.student;
+          if (station && student.class !== station) {
+            showStatus('error', student.name, student.class, '');
+            errorMessage.textContent = `Wrong station! This is ${station}, student is in ${student.class}`;
+            clearTimer = setTimeout(resetDisplay, 5000);
+            return;
+          }
+          
+          // Proceed with scan
           const result = await doScan(tagId);
           handleScanResult(result);
         } catch (err) {
