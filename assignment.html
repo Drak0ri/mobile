@@ -1,0 +1,571 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>IESV Tag Assignment</title>
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+    
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      background: #1a1a2e;
+      color: white;
+      min-height: 100vh;
+    }
+    
+    .header {
+      background: #16213e;
+      padding: 20px;
+    }
+    
+    .header h1 {
+      font-size: 1.5rem;
+      font-weight: 500;
+    }
+    
+    .main {
+      padding: 20px;
+      max-width: 900px;
+      margin: 0 auto;
+    }
+    
+    .section {
+      background: #16213e;
+      padding: 25px;
+      border-radius: 12px;
+      margin-bottom: 20px;
+    }
+    
+    .section h2 {
+      margin-bottom: 20px;
+      font-size: 1.2rem;
+      padding-bottom: 15px;
+      border-bottom: 1px solid #4a5568;
+    }
+    
+    /* Search */
+    .search-input {
+      width: 100%;
+      padding: 15px;
+      font-size: 1rem;
+      border: 2px solid #4a5568;
+      border-radius: 8px;
+      background: #1a1a2e;
+      color: white;
+    }
+    
+    .search-input:focus {
+      outline: none;
+      border-color: #6366f1;
+    }
+    
+    .search-results {
+      margin-top: 15px;
+      max-height: 250px;
+      overflow-y: auto;
+    }
+    
+    .search-result {
+      padding: 12px 15px;
+      background: #1a1a2e;
+      border-radius: 8px;
+      margin-bottom: 8px;
+      cursor: pointer;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      transition: background 0.2s;
+    }
+    
+    .search-result:hover {
+      background: #4a5568;
+    }
+    
+    .search-result.selected {
+      background: #6366f1;
+    }
+    
+    .result-name {
+      font-weight: 500;
+    }
+    
+    .result-class {
+      opacity: 0.7;
+      font-size: 0.9rem;
+    }
+    
+    .result-tags {
+      font-size: 0.85rem;
+      opacity: 0.6;
+    }
+    
+    /* Selected student */
+    .selected-section {
+      display: none;
+    }
+    
+    .selected-section.show {
+      display: block;
+    }
+    
+    .student-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 20px;
+    }
+    
+    .student-name {
+      font-size: 1.4rem;
+      font-weight: 600;
+    }
+    
+    .student-class {
+      opacity: 0.7;
+    }
+    
+    /* Current tags */
+    .tags-list {
+      margin-bottom: 25px;
+    }
+    
+    .tags-label {
+      font-size: 0.9rem;
+      opacity: 0.7;
+      margin-bottom: 10px;
+    }
+    
+    .tag-item {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      background: #1a1a2e;
+      padding: 10px 15px;
+      border-radius: 8px;
+      margin-right: 10px;
+      margin-bottom: 10px;
+    }
+    
+    .tag-id {
+      font-family: monospace;
+      font-size: 0.95rem;
+    }
+    
+    .tag-type {
+      font-size: 0.8rem;
+      opacity: 0.6;
+    }
+    
+    .tag-remove {
+      background: #ef4444;
+      border: none;
+      color: white;
+      width: 24px;
+      height: 24px;
+      border-radius: 50%;
+      cursor: pointer;
+      font-size: 1rem;
+      line-height: 1;
+    }
+    
+    .tag-remove:hover {
+      background: #dc2626;
+    }
+    
+    .no-tags {
+      opacity: 0.5;
+      font-style: italic;
+    }
+    
+    /* Scan new tag */
+    .scan-section {
+      background: #1a1a2e;
+      padding: 20px;
+      border-radius: 10px;
+    }
+    
+    .scan-section h3 {
+      margin-bottom: 15px;
+      font-size: 1rem;
+    }
+    
+    .scan-row {
+      display: flex;
+      gap: 15px;
+      align-items: center;
+      flex-wrap: wrap;
+    }
+    
+    .tag-input {
+      flex: 1;
+      min-width: 200px;
+      padding: 12px 15px;
+      font-size: 1rem;
+      font-family: monospace;
+      border: 2px solid #4a5568;
+      border-radius: 8px;
+      background: #16213e;
+      color: white;
+    }
+    
+    .tag-input:focus {
+      outline: none;
+      border-color: #6366f1;
+    }
+    
+    .tag-type-select {
+      padding: 12px 15px;
+      font-size: 1rem;
+      border: 2px solid #4a5568;
+      border-radius: 8px;
+      background: #16213e;
+      color: white;
+    }
+    
+    .assign-btn {
+      padding: 12px 25px;
+      font-size: 1rem;
+      font-weight: 600;
+      border: none;
+      border-radius: 8px;
+      background: #10b981;
+      color: white;
+      cursor: pointer;
+    }
+    
+    .assign-btn:hover {
+      background: #059669;
+    }
+    
+    .assign-btn:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+    }
+    
+    .scan-hint {
+      margin-top: 12px;
+      font-size: 0.85rem;
+      opacity: 0.6;
+    }
+    
+    /* Feedback */
+    .feedback {
+      margin-top: 20px;
+      padding: 15px;
+      border-radius: 8px;
+      text-align: center;
+      display: none;
+    }
+    
+    .feedback.show {
+      display: block;
+    }
+    
+    .feedback.success {
+      background: #065f46;
+    }
+    
+    .feedback.error {
+      background: #7f1d1d;
+    }
+    
+    /* Hidden input for RFID */
+    .hidden-input {
+      position: absolute;
+      left: -9999px;
+    }
+    
+    .scan-active {
+      border-color: #10b981 !important;
+      animation: pulse 1.5s infinite;
+    }
+    
+    @keyframes pulse {
+      0%, 100% { box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.4); }
+      50% { box-shadow: 0 0 0 10px rgba(16, 185, 129, 0); }
+    }
+  </style>
+</head>
+<body>
+  <div class="header">
+    <h1>IESV Tag Assignment</h1>
+  </div>
+  
+  <div class="main">
+    <!-- Search section -->
+    <div class="section">
+      <h2>1. Select Student</h2>
+      <input type="text" class="search-input" id="searchInput" placeholder="Type student name or class...">
+      <div class="search-results" id="searchResults"></div>
+    </div>
+    
+    <!-- Selected student section -->
+    <div class="section selected-section" id="selectedSection">
+      <h2>2. Manage Tags</h2>
+      
+      <div class="student-header">
+        <span class="student-name" id="studentName">--</span>
+        <span class="student-class" id="studentClass">--</span>
+      </div>
+      
+      <div class="tags-list">
+        <div class="tags-label">Current Tags:</div>
+        <div id="currentTags"></div>
+      </div>
+      
+      <div class="scan-section">
+        <h3>Assign New Tag</h3>
+        <div class="scan-row">
+          <input type="text" class="tag-input" id="tagInput" placeholder="Scan or type tag ID...">
+          <select class="tag-type-select" id="tagType">
+            <option value="primary">Primary</option>
+            <option value="additional">Additional</option>
+          </select>
+          <button class="assign-btn" id="assignBtn">Assign</button>
+        </div>
+        <div class="scan-hint">Tap RFID tag on reader or type ID manually</div>
+      </div>
+      
+      <div class="feedback" id="feedback"></div>
+    </div>
+  </div>
+
+  <script>
+    const API_URL = 'https://script.google.com/macros/s/AKfycbyGqqS1q6hvJEKpXRFLbqG01Pa_6uVVNCw6GHiUiFVc-5F2cMzd1ZRZqn-ZUL3Qq5hpGA/exec';
+    
+    let students = [];
+    let selectedStudent = null;
+    
+    const searchInput = document.getElementById('searchInput');
+    const searchResults = document.getElementById('searchResults');
+    const selectedSection = document.getElementById('selectedSection');
+    const studentName = document.getElementById('studentName');
+    const studentClass = document.getElementById('studentClass');
+    const currentTags = document.getElementById('currentTags');
+    const tagInput = document.getElementById('tagInput');
+    const tagType = document.getElementById('tagType');
+    const assignBtn = document.getElementById('assignBtn');
+    const feedback = document.getElementById('feedback');
+    
+    // Load students on start
+    loadStudents();
+    
+    async function loadStudents() {
+      try {
+        const url = `${API_URL}?action=getRoster`;
+        const response = await fetch(url);
+        const result = await response.json();
+        if (result.success) {
+          students = result.students;
+        }
+      } catch (err) {
+        console.error('Failed to load students:', err);
+      }
+    }
+    
+    // Search
+    searchInput.addEventListener('input', () => {
+      const query = searchInput.value.toLowerCase().trim();
+      
+      if (query.length < 2) {
+        searchResults.innerHTML = '';
+        return;
+      }
+      
+      const matches = students.filter(s => 
+        s.name.toLowerCase().includes(query) || 
+        s.class.toLowerCase().includes(query)
+      ).slice(0, 20);
+      
+      if (matches.length === 0) {
+        searchResults.innerHTML = '<div style="padding: 15px; opacity: 0.6;">No matches</div>';
+        return;
+      }
+      
+      searchResults.innerHTML = matches.map(s => {
+        const tagCount = countTags(s);
+        return `
+          <div class="search-result" data-id="${s.id}">
+            <div>
+              <div class="result-name">${escapeHtml(s.name)}</div>
+              <div class="result-class">${s.class}</div>
+            </div>
+            <div class="result-tags">${tagCount} tag${tagCount !== 1 ? 's' : ''}</div>
+          </div>
+        `;
+      }).join('');
+      
+      document.querySelectorAll('.search-result').forEach(el => {
+        el.addEventListener('click', () => selectStudent(el.dataset.id));
+      });
+    });
+    
+    function countTags(student) {
+      let count = 0;
+      if (student.primaryRfid) count++;
+      if (student.additionalRfids) {
+        count += student.additionalRfids.split(',').filter(t => t.trim()).length;
+      }
+      return count;
+    }
+    
+    function selectStudent(id) {
+      const student = students.find(s => String(s.id) === String(id));
+      if (!student) return;
+      
+      selectedStudent = student;
+      
+      document.querySelectorAll('.search-result').forEach(el => {
+        el.classList.toggle('selected', el.dataset.id === String(id));
+      });
+      
+      selectedSection.classList.add('show');
+      studentName.textContent = student.name;
+      studentClass.textContent = student.class;
+      
+      renderTags();
+      feedback.classList.remove('show');
+      tagInput.value = '';
+      tagInput.focus();
+    }
+    
+    function renderTags() {
+      if (!selectedStudent) return;
+      
+      let html = '';
+      
+      if (selectedStudent.primaryRfid) {
+        html += `
+          <div class="tag-item">
+            <span class="tag-id">${escapeHtml(selectedStudent.primaryRfid)}</span>
+            <span class="tag-type">(Primary)</span>
+            <button class="tag-remove" data-tag="${escapeHtml(selectedStudent.primaryRfid)}">&times;</button>
+          </div>
+        `;
+      }
+      
+      if (selectedStudent.additionalRfids) {
+        const additional = selectedStudent.additionalRfids.split(',').filter(t => t.trim());
+        additional.forEach(tag => {
+          html += `
+            <div class="tag-item">
+              <span class="tag-id">${escapeHtml(tag.trim())}</span>
+              <span class="tag-type">(Additional)</span>
+              <button class="tag-remove" data-tag="${escapeHtml(tag.trim())}">&times;</button>
+            </div>
+          `;
+        });
+      }
+      
+      if (!html) {
+        html = '<span class="no-tags">No tags assigned</span>';
+      }
+      
+      currentTags.innerHTML = html;
+      
+      // Add remove handlers
+      document.querySelectorAll('.tag-remove').forEach(btn => {
+        btn.addEventListener('click', () => removeTag(btn.dataset.tag));
+      });
+    }
+    
+    // Handle RFID scan (input ends with Enter)
+    tagInput.addEventListener('keypress', (e) => {
+      if (e.key === 'Enter') {
+        e.preventDefault();
+        assignTag();
+      }
+    });
+    
+    // Visual feedback when input focused
+    tagInput.addEventListener('focus', () => tagInput.classList.add('scan-active'));
+    tagInput.addEventListener('blur', () => tagInput.classList.remove('scan-active'));
+    
+    // Assign button
+    assignBtn.addEventListener('click', assignTag);
+    
+    async function assignTag() {
+      const tagId = tagInput.value.trim();
+      if (!tagId || !selectedStudent) return;
+      
+      assignBtn.disabled = true;
+      
+      const isPrimary = tagType.value === 'primary';
+      
+      try {
+        const url = `${API_URL}?action=assignTag&studentId=${encodeURIComponent(selectedStudent.id)}&tagId=${encodeURIComponent(tagId)}&isPrimary=${isPrimary}`;
+        const response = await fetch(url);
+        const result = await response.json();
+        
+        if (result.success) {
+          showFeedback('Tag assigned successfully', 'success');
+          
+          // Update local data
+          if (isPrimary) {
+            selectedStudent.primaryRfid = tagId;
+          } else {
+            const existing = selectedStudent.additionalRfids ? selectedStudent.additionalRfids.split(',').filter(t => t.trim()) : [];
+            existing.push(tagId);
+            selectedStudent.additionalRfids = existing.join(',');
+          }
+          
+          renderTags();
+          tagInput.value = '';
+          tagInput.focus();
+        } else {
+          showFeedback(result.error, 'error');
+        }
+      } catch (err) {
+        showFeedback(`Failed: ${err.message}`, 'error');
+      }
+      
+      assignBtn.disabled = false;
+    }
+    
+    async function removeTag(tagId) {
+      if (!selectedStudent) return;
+      if (!confirm(`Remove tag ${tagId}?`)) return;
+      
+      try {
+        const url = `${API_URL}?action=unassignTag&studentId=${encodeURIComponent(selectedStudent.id)}&tagId=${encodeURIComponent(tagId)}`;
+        const response = await fetch(url);
+        const result = await response.json();
+        
+        if (result.success) {
+          showFeedback('Tag removed', 'success');
+          
+          // Update local data
+          if (selectedStudent.primaryRfid === tagId) {
+            selectedStudent.primaryRfid = '';
+          } else {
+            const additional = selectedStudent.additionalRfids.split(',').filter(t => t.trim() && t.trim() !== tagId);
+            selectedStudent.additionalRfids = additional.join(',');
+          }
+          
+          renderTags();
+        } else {
+          showFeedback(result.error, 'error');
+        }
+      } catch (err) {
+        showFeedback(`Failed: ${err.message}`, 'error');
+      }
+    }
+    
+    function showFeedback(message, type) {
+      feedback.textContent = message;
+      feedback.className = `feedback show ${type}`;
+    }
+    
+    function escapeHtml(text) {
+      const div = document.createElement('div');
+      div.textContent = text || '';
+      return div.innerHTML;
+    }
+  </script>
+</body>
+</html>
