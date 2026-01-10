@@ -1,0 +1,450 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>IESV Phone Check-In</title>
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+    
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      height: 100vh;
+      display: flex;
+      flex-direction: column;
+      background: #1a1a2e;
+      color: white;
+    }
+    
+    .header {
+      padding: 20px;
+      text-align: center;
+      background: #16213e;
+    }
+    
+    .header h1 {
+      font-size: 1.5rem;
+      font-weight: 500;
+    }
+    
+    .station-info {
+      font-size: 0.9rem;
+      opacity: 0.7;
+      margin-top: 5px;
+    }
+    
+    .main {
+      flex: 1;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 40px;
+    }
+    
+    .scan-display {
+      text-align: center;
+      width: 100%;
+      max-width: 800px;
+    }
+    
+    .status-box {
+      padding: 60px 40px;
+      border-radius: 20px;
+      transition: all 0.3s ease;
+    }
+    
+    .status-ready {
+      background: #16213e;
+      border: 3px dashed #4a5568;
+    }
+    
+    .status-in {
+      background: #065f46;
+      border: 3px solid #10b981;
+    }
+    
+    .status-out {
+      background: #7f1d1d;
+      border: 3px solid #ef4444;
+    }
+    
+    .status-error {
+      background: #78350f;
+      border: 3px solid #f59e0b;
+    }
+    
+    .student-name {
+      font-size: 4rem;
+      font-weight: 700;
+      margin-bottom: 20px;
+      word-break: break-word;
+    }
+    
+    .student-class {
+      font-size: 1.5rem;
+      opacity: 0.8;
+      margin-bottom: 30px;
+    }
+    
+    .status-label {
+      font-size: 3rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+    }
+    
+    .ready-message {
+      font-size: 2rem;
+      opacity: 0.6;
+    }
+    
+    .error-message {
+      font-size: 1.5rem;
+      margin-top: 20px;
+      line-height: 1.4;
+    }
+    
+    .hidden-input {
+      position: absolute;
+      left: -9999px;
+    }
+    
+    .offline-banner {
+      display: none;
+      background: #f59e0b;
+      color: #000;
+      padding: 10px;
+      text-align: center;
+      font-weight: 600;
+    }
+    
+    .offline-banner.show {
+      display: block;
+    }
+    
+    .queue-count {
+      position: fixed;
+      bottom: 20px;
+      right: 20px;
+      background: #4a5568;
+      padding: 10px 20px;
+      border-radius: 10px;
+      font-size: 0.9rem;
+      display: none;
+    }
+    
+    .queue-count.show {
+      display: block;
+    }
+
+    /* Station selector modal */
+    .modal {
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,0.9);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 100;
+    }
+    
+    .modal.hidden {
+      display: none;
+    }
+    
+    .modal-content {
+      background: #16213e;
+      padding: 40px;
+      border-radius: 20px;
+      text-align: center;
+      max-width: 500px;
+      width: 90%;
+    }
+    
+    .modal h2 {
+      margin-bottom: 30px;
+    }
+    
+    .station-buttons {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 15px;
+    }
+    
+    .station-btn {
+      padding: 20px;
+      font-size: 1.5rem;
+      font-weight: 600;
+      border: none;
+      border-radius: 10px;
+      background: #4a5568;
+      color: white;
+      cursor: pointer;
+      transition: background 0.2s;
+    }
+    
+    .station-btn:hover {
+      background: #6366f1;
+    }
+  </style>
+</head>
+<body>
+  <!-- Station selector modal -->
+  <div class="modal" id="stationModal">
+    <div class="modal-content">
+      <h2>Select Station</h2>
+      <div class="station-buttons">
+        <button class="station-btn" data-station="7A">7A</button>
+        <button class="station-btn" data-station="7B">7B</button>
+        <button class="station-btn" data-station="7C">7C</button>
+        <button class="station-btn" data-station="8A">8A</button>
+        <button class="station-btn" data-station="8B">8B</button>
+        <button class="station-btn" data-station="8C">8C</button>
+        <button class="station-btn" data-station="9A">9A</button>
+        <button class="station-btn" data-station="9B">9B</button>
+        <button class="station-btn" data-station="9C">9C</button>
+        <button class="station-btn" data-station="9D">9D</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="offline-banner" id="offlineBanner">
+    ⚠️ Offline - scans will sync when connection returns
+  </div>
+  
+  <div class="header">
+    <h1>IESV Phone Check-In</h1>
+    <div class="station-info" id="stationInfo">Station: --</div>
+  </div>
+  
+  <div class="main">
+    <div class="scan-display">
+      <div class="status-box status-ready" id="statusBox">
+        <div class="ready-message" id="readyMessage">Ready to scan...</div>
+        <div class="student-name" id="studentName"></div>
+        <div class="student-class" id="studentClass"></div>
+        <div class="status-label" id="statusLabel"></div>
+        <div class="error-message" id="errorMessage"></div>
+      </div>
+    </div>
+  </div>
+  
+  <div class="queue-count" id="queueCount">Queued: 0</div>
+  
+  <!-- Hidden input to capture RFID reader input -->
+  <input type="text" class="hidden-input" id="rfidInput" autocomplete="off">
+
+  <script>
+    const API_URL = 'https://script.google.com/macros/s/AKfycbyGqqS1q6hvJEKpXRFLbqG01Pa_6uVVNCw6GHiUiFVc-5F2cMzd1ZRZqn-ZUL3Qq5hpGA/exec';
+    
+    let station = localStorage.getItem('iesv_station') || null;
+    let scanQueue = JSON.parse(localStorage.getItem('iesv_queue') || '[]');
+    let isProcessing = false;
+    let clearTimer = null;
+    
+    const rfidInput = document.getElementById('rfidInput');
+    const statusBox = document.getElementById('statusBox');
+    const studentName = document.getElementById('studentName');
+    const studentClass = document.getElementById('studentClass');
+    const statusLabel = document.getElementById('statusLabel');
+    const errorMessage = document.getElementById('errorMessage');
+    const readyMessage = document.getElementById('readyMessage');
+    const stationInfo = document.getElementById('stationInfo');
+    const stationModal = document.getElementById('stationModal');
+    const offlineBanner = document.getElementById('offlineBanner');
+    const queueCount = document.getElementById('queueCount');
+    
+    // Initialize
+    function init() {
+      if (station) {
+        stationModal.classList.add('hidden');
+        stationInfo.textContent = `Station: ${station}`;
+      }
+      
+      updateQueueDisplay();
+      processQueue();
+      
+      // Keep focus on input
+      rfidInput.focus();
+      document.addEventListener('click', () => rfidInput.focus());
+      
+      // Handle RFID input (reader sends data + Enter)
+      rfidInput.addEventListener('keypress', (e) => {
+        if (e.key === 'Enter') {
+          const tagId = rfidInput.value.trim();
+          rfidInput.value = '';
+          if (tagId) {
+            handleScan(tagId);
+          }
+        }
+      });
+      
+      // Station selection
+      document.querySelectorAll('.station-btn').forEach(btn => {
+        btn.addEventListener('click', () => {
+          station = btn.dataset.station;
+          localStorage.setItem('iesv_station', station);
+          stationInfo.textContent = `Station: ${station}`;
+          stationModal.classList.add('hidden');
+          rfidInput.focus();
+        });
+      });
+      
+      // Online/offline detection
+      window.addEventListener('online', () => {
+        offlineBanner.classList.remove('show');
+        processQueue();
+      });
+      
+      window.addEventListener('offline', () => {
+        offlineBanner.classList.add('show');
+      });
+      
+      if (!navigator.onLine) {
+        offlineBanner.classList.add('show');
+      }
+    }
+    
+    async function handleScan(tagId) {
+      // Clear any pending reset
+      if (clearTimer) {
+        clearTimeout(clearTimer);
+        clearTimer = null;
+      }
+      
+      // Show processing state
+      showStatus('processing', 'Processing...', '', '');
+      
+      if (navigator.onLine) {
+        try {
+          const result = await doScan(tagId);
+          handleScanResult(result);
+        } catch (err) {
+          // Queue for retry
+          queueScan(tagId);
+          showStatus('error', 'Scan queued', '', 'Will sync when online');
+        }
+      } else {
+        queueScan(tagId);
+        showStatus('error', 'Scan queued', '', 'Will sync when online');
+      }
+      
+      // Reset display after delay
+      clearTimer = setTimeout(resetDisplay, 4000);
+    }
+    
+    async function doScan(tagId) {
+      const url = `${API_URL}?action=scan&tagId=${encodeURIComponent(tagId)}&station=${encodeURIComponent(station || '')}`;
+      const response = await fetch(url);
+      return await response.json();
+    }
+    
+    function handleScanResult(result) {
+      if (result.success) {
+        const status = result.student.status;
+        showStatus(
+          status === 'IN' ? 'in' : 'out',
+          result.student.name,
+          result.student.class,
+          status === 'IN' ? 'Phone IN' : 'Phone OUT'
+        );
+      } else if (result.error === 'STALE') {
+        showStatus('error', result.student.name, result.student.class, '');
+        errorMessage.textContent = result.message;
+      } else if (result.error === 'Tag not found') {
+        showStatus('error', 'Unknown Tag', '', 'Tag not registered');
+      } else {
+        showStatus('error', 'Error', '', result.error || 'Scan failed');
+      }
+    }
+    
+    function showStatus(type, name, cls, label) {
+      statusBox.className = 'status-box';
+      readyMessage.style.display = 'none';
+      studentName.style.display = 'block';
+      studentClass.style.display = 'block';
+      statusLabel.style.display = 'block';
+      errorMessage.style.display = 'none';
+      
+      studentName.textContent = name;
+      studentClass.textContent = cls;
+      statusLabel.textContent = label;
+      
+      switch (type) {
+        case 'in':
+          statusBox.classList.add('status-in');
+          break;
+        case 'out':
+          statusBox.classList.add('status-out');
+          break;
+        case 'error':
+          statusBox.classList.add('status-error');
+          errorMessage.style.display = 'block';
+          break;
+        default:
+          statusBox.classList.add('status-ready');
+      }
+    }
+    
+    function resetDisplay() {
+      statusBox.className = 'status-box status-ready';
+      readyMessage.style.display = 'block';
+      studentName.style.display = 'none';
+      studentClass.style.display = 'none';
+      statusLabel.style.display = 'none';
+      errorMessage.style.display = 'none';
+      studentName.textContent = '';
+      studentClass.textContent = '';
+      statusLabel.textContent = '';
+      errorMessage.textContent = '';
+    }
+    
+    function queueScan(tagId) {
+      scanQueue.push({ tagId, station, timestamp: Date.now() });
+      localStorage.setItem('iesv_queue', JSON.stringify(scanQueue));
+      updateQueueDisplay();
+    }
+    
+    function updateQueueDisplay() {
+      if (scanQueue.length > 0) {
+        queueCount.textContent = `Queued: ${scanQueue.length}`;
+        queueCount.classList.add('show');
+      } else {
+        queueCount.classList.remove('show');
+      }
+    }
+    
+    async function processQueue() {
+      if (isProcessing || scanQueue.length === 0 || !navigator.onLine) return;
+      
+      isProcessing = true;
+      
+      while (scanQueue.length > 0 && navigator.onLine) {
+        const scan = scanQueue[0];
+        try {
+          await doScan(scan.tagId);
+          scanQueue.shift();
+          localStorage.setItem('iesv_queue', JSON.stringify(scanQueue));
+          updateQueueDisplay();
+        } catch (err) {
+          // Stop processing on error, retry later
+          break;
+        }
+      }
+      
+      isProcessing = false;
+      
+      // Retry in 30 seconds if still have items
+      if (scanQueue.length > 0) {
+        setTimeout(processQueue, 30000);
+      }
+    }
+    
+    init();
+  </script>
+</body>
+</html>
