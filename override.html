@@ -1,0 +1,540 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>IESV Override Panel</title>
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+    
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      background: #1a1a2e;
+      color: white;
+      min-height: 100vh;
+    }
+    
+    .header {
+      background: #16213e;
+      padding: 20px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    
+    .header h1 {
+      font-size: 1.5rem;
+      font-weight: 500;
+    }
+    
+    .lock-btn {
+      padding: 10px 20px;
+      border: none;
+      border-radius: 8px;
+      background: #ef4444;
+      color: white;
+      font-weight: 600;
+      cursor: pointer;
+    }
+    
+    /* Login screen */
+    .login-screen {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      height: calc(100vh - 80px);
+    }
+    
+    .login-box {
+      background: #16213e;
+      padding: 40px;
+      border-radius: 16px;
+      text-align: center;
+      width: 90%;
+      max-width: 400px;
+    }
+    
+    .login-box h2 {
+      margin-bottom: 30px;
+    }
+    
+    .login-input {
+      width: 100%;
+      padding: 15px;
+      font-size: 1.1rem;
+      border: 2px solid #4a5568;
+      border-radius: 8px;
+      background: #1a1a2e;
+      color: white;
+      text-align: center;
+      margin-bottom: 20px;
+    }
+    
+    .login-input:focus {
+      outline: none;
+      border-color: #6366f1;
+    }
+    
+    .login-btn {
+      width: 100%;
+      padding: 15px;
+      font-size: 1.1rem;
+      font-weight: 600;
+      border: none;
+      border-radius: 8px;
+      background: #6366f1;
+      color: white;
+      cursor: pointer;
+    }
+    
+    .login-btn:hover {
+      background: #4f46e5;
+    }
+    
+    .login-error {
+      color: #ef4444;
+      margin-top: 15px;
+    }
+    
+    /* Main panel */
+    .panel {
+      display: none;
+      padding: 20px;
+      max-width: 800px;
+      margin: 0 auto;
+    }
+    
+    .panel.show {
+      display: block;
+    }
+    
+    .search-section {
+      background: #16213e;
+      padding: 25px;
+      border-radius: 12px;
+      margin-bottom: 20px;
+    }
+    
+    .search-section h2 {
+      margin-bottom: 20px;
+      font-size: 1.2rem;
+    }
+    
+    .search-input {
+      width: 100%;
+      padding: 15px;
+      font-size: 1rem;
+      border: 2px solid #4a5568;
+      border-radius: 8px;
+      background: #1a1a2e;
+      color: white;
+    }
+    
+    .search-input:focus {
+      outline: none;
+      border-color: #6366f1;
+    }
+    
+    .search-results {
+      margin-top: 15px;
+      max-height: 300px;
+      overflow-y: auto;
+    }
+    
+    .search-result {
+      padding: 12px 15px;
+      background: #1a1a2e;
+      border-radius: 8px;
+      margin-bottom: 8px;
+      cursor: pointer;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      transition: background 0.2s;
+    }
+    
+    .search-result:hover {
+      background: #4a5568;
+    }
+    
+    .search-result.selected {
+      background: #6366f1;
+    }
+    
+    .result-name {
+      font-weight: 500;
+    }
+    
+    .result-class {
+      opacity: 0.7;
+      font-size: 0.9rem;
+    }
+    
+    .result-status {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    
+    .status-dot {
+      width: 12px;
+      height: 12px;
+      border-radius: 50%;
+    }
+    
+    .status-dot.in { background: #10b981; }
+    .status-dot.out { background: #ef4444; }
+    
+    /* Selected student panel */
+    .selected-section {
+      background: #16213e;
+      padding: 25px;
+      border-radius: 12px;
+      display: none;
+    }
+    
+    .selected-section.show {
+      display: block;
+    }
+    
+    .selected-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 25px;
+      padding-bottom: 15px;
+      border-bottom: 1px solid #4a5568;
+    }
+    
+    .selected-name {
+      font-size: 1.5rem;
+      font-weight: 600;
+    }
+    
+    .selected-info {
+      display: flex;
+      align-items: center;
+      gap: 15px;
+    }
+    
+    .selected-class {
+      font-size: 1.1rem;
+      opacity: 0.7;
+    }
+    
+    .selected-status {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 8px 15px;
+      background: #1a1a2e;
+      border-radius: 8px;
+    }
+    
+    .action-buttons {
+      display: flex;
+      gap: 15px;
+      flex-wrap: wrap;
+    }
+    
+    .action-btn {
+      flex: 1;
+      min-width: 150px;
+      padding: 20px;
+      font-size: 1.1rem;
+      font-weight: 600;
+      border: none;
+      border-radius: 10px;
+      cursor: pointer;
+      transition: opacity 0.2s;
+    }
+    
+    .action-btn:hover {
+      opacity: 0.9;
+    }
+    
+    .action-btn:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+    }
+    
+    .btn-in {
+      background: #10b981;
+      color: white;
+    }
+    
+    .btn-out {
+      background: #ef4444;
+      color: white;
+    }
+    
+    .btn-clear {
+      background: #f59e0b;
+      color: black;
+    }
+    
+    .feedback {
+      margin-top: 20px;
+      padding: 15px;
+      border-radius: 8px;
+      text-align: center;
+      display: none;
+    }
+    
+    .feedback.show {
+      display: block;
+    }
+    
+    .feedback.success {
+      background: #065f46;
+    }
+    
+    .feedback.error {
+      background: #7f1d1d;
+    }
+    
+    .hidden {
+      display: none !important;
+    }
+  </style>
+</head>
+<body>
+  <div class="header">
+    <h1>IESV Override Panel</h1>
+    <button class="lock-btn hidden" id="lockBtn">Lock</button>
+  </div>
+  
+  <!-- Login screen -->
+  <div class="login-screen" id="loginScreen">
+    <div class="login-box">
+      <h2>Enter Password</h2>
+      <input type="password" class="login-input" id="passwordInput" placeholder="Password">
+      <button class="login-btn" id="loginBtn">Unlock</button>
+      <div class="login-error hidden" id="loginError">Incorrect password</div>
+    </div>
+  </div>
+  
+  <!-- Main panel -->
+  <div class="panel" id="panel">
+    <div class="search-section">
+      <h2>Search Student</h2>
+      <input type="text" class="search-input" id="searchInput" placeholder="Type student name or class...">
+      <div class="search-results" id="searchResults"></div>
+    </div>
+    
+    <div class="selected-section" id="selectedSection">
+      <div class="selected-header">
+        <span class="selected-name" id="selectedName">--</span>
+        <div class="selected-info">
+          <span class="selected-class" id="selectedClass">--</span>
+          <div class="selected-status">
+            <div class="status-dot" id="selectedDot"></div>
+            <span id="selectedStatusText">--</span>
+          </div>
+        </div>
+      </div>
+      
+      <div class="action-buttons">
+        <button class="action-btn btn-in" id="btnIn">Force IN</button>
+        <button class="action-btn btn-out" id="btnOut">Force OUT</button>
+        <button class="action-btn btn-clear" id="btnClear">Clear (Stale)</button>
+      </div>
+      
+      <div class="feedback" id="feedback"></div>
+    </div>
+  </div>
+
+  <script>
+    const API_URL = 'https://script.google.com/macros/s/AKfycbyGqqS1q6hvJEKpXRFLbqG01Pa_6uVVNCw6GHiUiFVc-5F2cMzd1ZRZqn-ZUL3Qq5hpGA/exec';
+    const PASSWORD = 'iesv2025'; // Change this
+    
+    let students = [];
+    let selectedStudent = null;
+    
+    const loginScreen = document.getElementById('loginScreen');
+    const panel = document.getElementById('panel');
+    const lockBtn = document.getElementById('lockBtn');
+    const passwordInput = document.getElementById('passwordInput');
+    const loginBtn = document.getElementById('loginBtn');
+    const loginError = document.getElementById('loginError');
+    const searchInput = document.getElementById('searchInput');
+    const searchResults = document.getElementById('searchResults');
+    const selectedSection = document.getElementById('selectedSection');
+    const selectedName = document.getElementById('selectedName');
+    const selectedClass = document.getElementById('selectedClass');
+    const selectedDot = document.getElementById('selectedDot');
+    const selectedStatusText = document.getElementById('selectedStatusText');
+    const btnIn = document.getElementById('btnIn');
+    const btnOut = document.getElementById('btnOut');
+    const btnClear = document.getElementById('btnClear');
+    const feedback = document.getElementById('feedback');
+    
+    // Login
+    loginBtn.addEventListener('click', tryLogin);
+    passwordInput.addEventListener('keypress', (e) => {
+      if (e.key === 'Enter') tryLogin();
+    });
+    
+    function tryLogin() {
+      if (passwordInput.value === PASSWORD) {
+        loginScreen.classList.add('hidden');
+        panel.classList.add('show');
+        lockBtn.classList.remove('hidden');
+        loadStudents();
+      } else {
+        loginError.classList.remove('hidden');
+        passwordInput.value = '';
+      }
+    }
+    
+    // Lock
+    lockBtn.addEventListener('click', () => {
+      panel.classList.remove('show');
+      loginScreen.classList.remove('hidden');
+      lockBtn.classList.add('hidden');
+      passwordInput.value = '';
+      loginError.classList.add('hidden');
+      selectedStudent = null;
+      selectedSection.classList.remove('show');
+      searchInput.value = '';
+      searchResults.innerHTML = '';
+    });
+    
+    // Load students
+    async function loadStudents() {
+      try {
+        const url = `${API_URL}?action=getStatus`;
+        const response = await fetch(url);
+        const result = await response.json();
+        if (result.success) {
+          students = result.students;
+        }
+      } catch (err) {
+        console.error('Failed to load students:', err);
+      }
+    }
+    
+    // Search
+    searchInput.addEventListener('input', () => {
+      const query = searchInput.value.toLowerCase().trim();
+      
+      if (query.length < 2) {
+        searchResults.innerHTML = '';
+        return;
+      }
+      
+      const matches = students.filter(s => 
+        s.name.toLowerCase().includes(query) || 
+        s.class.toLowerCase().includes(query)
+      ).slice(0, 20);
+      
+      if (matches.length === 0) {
+        searchResults.innerHTML = '<div style="padding: 15px; opacity: 0.6;">No matches</div>';
+        return;
+      }
+      
+      searchResults.innerHTML = matches.map(s => `
+        <div class="search-result" data-id="${s.id}">
+          <div>
+            <div class="result-name">${escapeHtml(s.name)}</div>
+            <div class="result-class">${s.class}</div>
+          </div>
+          <div class="result-status">
+            <div class="status-dot ${s.status === 'IN' ? 'in' : 'out'}"></div>
+            <span>${s.status === 'IN' ? 'IN' : 'OUT'}</span>
+          </div>
+        </div>
+      `).join('');
+      
+      // Add click handlers
+      document.querySelectorAll('.search-result').forEach(el => {
+        el.addEventListener('click', () => selectStudent(el.dataset.id));
+      });
+    });
+    
+    function selectStudent(id) {
+      const student = students.find(s => String(s.id) === String(id));
+      if (!student) return;
+      
+      selectedStudent = student;
+      
+      // Update UI
+      document.querySelectorAll('.search-result').forEach(el => {
+        el.classList.toggle('selected', el.dataset.id === String(id));
+      });
+      
+      selectedSection.classList.add('show');
+      selectedName.textContent = student.name;
+      selectedClass.textContent = student.class;
+      selectedDot.className = `status-dot ${student.status === 'IN' ? 'in' : 'out'}`;
+      selectedStatusText.textContent = student.status === 'IN' ? 'IN' : 'OUT';
+      
+      feedback.classList.remove('show');
+    }
+    
+    // Action buttons
+    btnIn.addEventListener('click', () => doOverride('IN'));
+    btnOut.addEventListener('click', () => doOverride('OUT'));
+    btnClear.addEventListener('click', () => doOverride('CLEAR'));
+    
+    async function doOverride(action) {
+      if (!selectedStudent) return;
+      
+      btnIn.disabled = true;
+      btnOut.disabled = true;
+      btnClear.disabled = true;
+      
+      try {
+        const url = `${API_URL}?action=override&studentId=${encodeURIComponent(selectedStudent.id)}&newStatus=${action}`;
+        const response = await fetch(url);
+        const result = await response.json();
+        
+        if (result.success) {
+          showFeedback(`${selectedStudent.name} set to ${result.student.status}`, 'success');
+          
+          // Update local data
+          const idx = students.findIndex(s => String(s.id) === String(selectedStudent.id));
+          if (idx !== -1) {
+            students[idx].status = result.student.status;
+          }
+          selectedStudent.status = result.student.status;
+          
+          // Update display
+          selectedDot.className = `status-dot ${result.student.status === 'IN' ? 'in' : 'out'}`;
+          selectedStatusText.textContent = result.student.status;
+          
+          // Update search results
+          const resultEl = document.querySelector(`.search-result[data-id="${selectedStudent.id}"] .status-dot`);
+          if (resultEl) {
+            resultEl.className = `status-dot ${result.student.status === 'IN' ? 'in' : 'out'}`;
+            resultEl.nextElementSibling.textContent = result.student.status;
+          }
+        } else {
+          showFeedback(`Error: ${result.error}`, 'error');
+        }
+      } catch (err) {
+        showFeedback(`Failed: ${err.message}`, 'error');
+      }
+      
+      btnIn.disabled = false;
+      btnOut.disabled = false;
+      btnClear.disabled = false;
+    }
+    
+    function showFeedback(message, type) {
+      feedback.textContent = message;
+      feedback.className = `feedback show ${type}`;
+    }
+    
+    function escapeHtml(text) {
+      const div = document.createElement('div');
+      div.textContent = text;
+      return div.innerHTML;
+    }
+  </script>
+</body>
+</html>
