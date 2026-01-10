@@ -160,6 +160,75 @@
     .queue-count.show {
       display: block;
     }
+    
+    /* Test mode */
+    .test-panel {
+      position: fixed;
+      bottom: 20px;
+      left: 20px;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+    
+    .test-toggle {
+      padding: 10px 20px;
+      font-size: 0.9rem;
+      border: none;
+      border-radius: 8px;
+      background: #4a5568;
+      color: white;
+      cursor: pointer;
+    }
+    
+    .test-toggle:hover {
+      background: #6366f1;
+    }
+    
+    .test-toggle.active {
+      background: #f59e0b;
+      color: black;
+    }
+    
+    .test-input-row {
+      display: flex;
+      gap: 10px;
+    }
+    
+    .test-input-row.hidden {
+      display: none;
+    }
+    
+    .test-input {
+      padding: 10px 15px;
+      font-size: 1rem;
+      font-family: monospace;
+      border: 2px solid #4a5568;
+      border-radius: 8px;
+      background: #16213e;
+      color: white;
+      width: 180px;
+    }
+    
+    .test-input:focus {
+      outline: none;
+      border-color: #f59e0b;
+    }
+    
+    .test-btn {
+      padding: 10px 20px;
+      font-size: 1rem;
+      font-weight: 600;
+      border: none;
+      border-radius: 8px;
+      background: #f59e0b;
+      color: black;
+      cursor: pointer;
+    }
+    
+    .test-btn:hover {
+      background: #d97706;
+    }
 
     /* Station selector modal */
     .modal {
@@ -258,6 +327,15 @@
   
   <div class="queue-count" id="queueCount">Queued: 0</div>
   
+  <!-- Test mode panel -->
+  <div class="test-panel" id="testPanel">
+    <button class="test-toggle" id="testToggle">🧪 Test Mode</button>
+    <div class="test-input-row hidden" id="testInputRow">
+      <input type="text" class="test-input" id="testTagInput" placeholder="Enter tag ID...">
+      <button class="test-btn" id="testBtn">Scan</button>
+    </div>
+  </div>
+  
   <!-- Hidden input to capture RFID reader input -->
   <input type="text" class="hidden-input" id="rfidInput" autocomplete="off">
 
@@ -335,6 +413,38 @@
       if (!navigator.onLine) {
         offlineBanner.classList.add('show');
       }
+      
+      // Test mode
+      const testToggle = document.getElementById('testToggle');
+      const testInputRow = document.getElementById('testInputRow');
+      const testTagInput = document.getElementById('testTagInput');
+      const testBtn = document.getElementById('testBtn');
+      
+      testToggle.addEventListener('click', () => {
+        testToggle.classList.toggle('active');
+        testInputRow.classList.toggle('hidden');
+        if (!testInputRow.classList.contains('hidden')) {
+          testTagInput.focus();
+        }
+      });
+      
+      testBtn.addEventListener('click', () => {
+        const tagId = testTagInput.value.trim();
+        if (tagId) {
+          handleScan(tagId);
+          testTagInput.value = '';
+        }
+      });
+      
+      testTagInput.addEventListener('keypress', (e) => {
+        if (e.key === 'Enter') {
+          const tagId = testTagInput.value.trim();
+          if (tagId) {
+            handleScan(tagId);
+            testTagInput.value = '';
+          }
+        }
+      });
     }
     
     async function handleScan(tagId) {
