@@ -1,0 +1,333 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>IESV Dashboard</title>
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+    
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      background: #1a1a2e;
+      color: white;
+      min-height: 100vh;
+    }
+    
+    .header {
+      background: #16213e;
+      padding: 20px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 15px;
+    }
+    
+    .header h1 {
+      font-size: 1.5rem;
+      font-weight: 500;
+    }
+    
+    .tabs {
+      display: flex;
+      gap: 10px;
+    }
+    
+    .tab {
+      padding: 10px 25px;
+      border: none;
+      border-radius: 8px;
+      font-size: 1rem;
+      font-weight: 600;
+      cursor: pointer;
+      background: #4a5568;
+      color: white;
+      transition: background 0.2s;
+    }
+    
+    .tab:hover {
+      background: #6366f1;
+    }
+    
+    .tab.active {
+      background: #6366f1;
+    }
+    
+    .controls {
+      display: flex;
+      gap: 15px;
+      align-items: center;
+    }
+    
+    .refresh-btn {
+      padding: 10px 20px;
+      border: none;
+      border-radius: 8px;
+      background: #10b981;
+      color: white;
+      font-weight: 600;
+      cursor: pointer;
+    }
+    
+    .refresh-btn:hover {
+      background: #059669;
+    }
+    
+    .last-update {
+      font-size: 0.85rem;
+      opacity: 0.7;
+    }
+    
+    .stats {
+      background: #16213e;
+      padding: 15px 20px;
+      display: flex;
+      gap: 30px;
+      border-bottom: 1px solid #4a5568;
+    }
+    
+    .stat {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    
+    .stat-dot {
+      width: 12px;
+      height: 12px;
+      border-radius: 50%;
+    }
+    
+    .stat-dot.green { background: #10b981; }
+    .stat-dot.red { background: #ef4444; }
+    
+    .stat-label {
+      font-size: 0.9rem;
+    }
+    
+    .stat-value {
+      font-weight: 700;
+      font-size: 1.1rem;
+    }
+    
+    .main {
+      padding: 20px;
+    }
+    
+    .class-section {
+      margin-bottom: 30px;
+    }
+    
+    .class-header {
+      font-size: 1.2rem;
+      font-weight: 600;
+      margin-bottom: 15px;
+      padding-bottom: 10px;
+      border-bottom: 1px solid #4a5568;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    
+    .class-stats {
+      font-size: 0.9rem;
+      font-weight: 400;
+      opacity: 0.7;
+    }
+    
+    .students-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+      gap: 10px;
+    }
+    
+    .student-card {
+      background: #16213e;
+      padding: 12px 15px;
+      border-radius: 8px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+    
+    .student-dot {
+      width: 14px;
+      height: 14px;
+      border-radius: 50%;
+      flex-shrink: 0;
+    }
+    
+    .student-dot.in { background: #10b981; }
+    .student-dot.out { background: #ef4444; }
+    
+    .student-name {
+      font-size: 0.95rem;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+    
+    .loading {
+      text-align: center;
+      padding: 60px;
+      font-size: 1.2rem;
+      opacity: 0.6;
+    }
+    
+    .error {
+      text-align: center;
+      padding: 60px;
+      color: #ef4444;
+    }
+  </style>
+</head>
+<body>
+  <div class="header">
+    <h1>IESV Phone Check-In Dashboard</h1>
+    <div class="tabs">
+      <button class="tab active" data-year="7">Year 7</button>
+      <button class="tab" data-year="8">Year 8</button>
+      <button class="tab" data-year="9">Year 9</button>
+      <button class="tab" data-year="">All</button>
+    </div>
+    <div class="controls">
+      <span class="last-update" id="lastUpdate">--</span>
+      <button class="refresh-btn" id="refreshBtn">Refresh</button>
+    </div>
+  </div>
+  
+  <div class="stats" id="stats">
+    <div class="stat">
+      <div class="stat-dot green"></div>
+      <span class="stat-label">Phones In:</span>
+      <span class="stat-value" id="statIn">--</span>
+    </div>
+    <div class="stat">
+      <div class="stat-dot red"></div>
+      <span class="stat-label">Not Handed In:</span>
+      <span class="stat-value" id="statOut">--</span>
+    </div>
+  </div>
+  
+  <div class="main" id="main">
+    <div class="loading">Loading...</div>
+  </div>
+
+  <script>
+    const API_URL = 'https://script.google.com/macros/s/AKfycbyGqqS1q6hvJEKpXRFLbqG01Pa_6uVVNCw6GHiUiFVc-5F2cMzd1ZRZqn-ZUL3Qq5hpGA/exec';
+    
+    let currentYear = '7';
+    let students = [];
+    
+    const main = document.getElementById('main');
+    const statIn = document.getElementById('statIn');
+    const statOut = document.getElementById('statOut');
+    const lastUpdate = document.getElementById('lastUpdate');
+    const refreshBtn = document.getElementById('refreshBtn');
+    
+    // Tab switching
+    document.querySelectorAll('.tab').forEach(tab => {
+      tab.addEventListener('click', () => {
+        document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+        tab.classList.add('active');
+        currentYear = tab.dataset.year;
+        renderStudents();
+      });
+    });
+    
+    // Refresh button
+    refreshBtn.addEventListener('click', loadData);
+    
+    async function loadData() {
+      main.innerHTML = '<div class="loading">Loading...</div>';
+      
+      try {
+        const url = `${API_URL}?action=getStatus`;
+        const response = await fetch(url);
+        const result = await response.json();
+        
+        if (result.success) {
+          students = result.students;
+          renderStudents();
+          lastUpdate.textContent = `Updated: ${new Date().toLocaleTimeString()}`;
+        } else {
+          main.innerHTML = `<div class="error">Error: ${result.error}</div>`;
+        }
+      } catch (err) {
+        main.innerHTML = `<div class="error">Failed to load data: ${err.message}</div>`;
+      }
+    }
+    
+    function renderStudents() {
+      // Filter by year
+      let filtered = students;
+      if (currentYear) {
+        filtered = students.filter(s => s.class.startsWith(currentYear));
+      }
+      
+      // Update stats
+      const inCount = filtered.filter(s => s.status === 'IN').length;
+      const outCount = filtered.filter(s => s.status !== 'IN').length;
+      statIn.textContent = inCount;
+      statOut.textContent = outCount;
+      
+      // Group by class
+      const byClass = {};
+      filtered.forEach(s => {
+        if (!byClass[s.class]) byClass[s.class] = [];
+        byClass[s.class].push(s);
+      });
+      
+      // Sort classes
+      const classes = Object.keys(byClass).sort();
+      
+      if (classes.length === 0) {
+        main.innerHTML = '<div class="loading">No students found</div>';
+        return;
+      }
+      
+      let html = '';
+      classes.forEach(cls => {
+        const classStudents = byClass[cls].sort((a, b) => a.name.localeCompare(b.name));
+        const classIn = classStudents.filter(s => s.status === 'IN').length;
+        
+        html += `
+          <div class="class-section">
+            <div class="class-header">
+              <span>${cls}</span>
+              <span class="class-stats">${classIn}/${classStudents.length} in</span>
+            </div>
+            <div class="students-grid">
+              ${classStudents.map(s => `
+                <div class="student-card">
+                  <div class="student-dot ${s.status === 'IN' ? 'in' : 'out'}"></div>
+                  <div class="student-name">${escapeHtml(s.name)}</div>
+                </div>
+              `).join('')}
+            </div>
+          </div>
+        `;
+      });
+      
+      main.innerHTML = html;
+    }
+    
+    function escapeHtml(text) {
+      const div = document.createElement('div');
+      div.textContent = text;
+      return div.innerHTML;
+    }
+    
+    // Auto-refresh every 30 seconds
+    setInterval(loadData, 30000);
+    
+    // Initial load
+    loadData();
+  </script>
+</body>
+</html>
