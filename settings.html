@@ -1,0 +1,491 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>IESV Settings</title>
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+    
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      background: #1a1a2e;
+      color: white;
+      min-height: 100vh;
+    }
+    
+    .header {
+      background: #16213e;
+      padding: 20px;
+    }
+    
+    .header h1 {
+      font-size: 1.5rem;
+      font-weight: 500;
+    }
+    
+    .main {
+      padding: 20px;
+      max-width: 900px;
+      margin: 0 auto;
+    }
+    
+    .section {
+      background: #16213e;
+      padding: 25px;
+      border-radius: 12px;
+      margin-bottom: 20px;
+    }
+    
+    .section-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 20px;
+      padding-bottom: 15px;
+      border-bottom: 1px solid #4a5568;
+    }
+    
+    .section h2 {
+      font-size: 1.2rem;
+    }
+    
+    .add-btn {
+      padding: 10px 20px;
+      font-size: 0.95rem;
+      font-weight: 600;
+      border: none;
+      border-radius: 8px;
+      background: #10b981;
+      color: white;
+      cursor: pointer;
+    }
+    
+    .add-btn:hover {
+      background: #059669;
+    }
+    
+    /* Recipients table */
+    .recipients-table {
+      width: 100%;
+      border-collapse: collapse;
+    }
+    
+    .recipients-table th {
+      text-align: left;
+      padding: 12px 10px;
+      border-bottom: 2px solid #4a5568;
+      font-weight: 600;
+      font-size: 0.9rem;
+      opacity: 0.8;
+    }
+    
+    .recipients-table td {
+      padding: 12px 10px;
+      border-bottom: 1px solid #4a5568;
+      vertical-align: middle;
+    }
+    
+    .recipients-table tr:last-child td {
+      border-bottom: none;
+    }
+    
+    .input-field {
+      width: 100%;
+      padding: 10px 12px;
+      font-size: 0.95rem;
+      border: 2px solid #4a5568;
+      border-radius: 6px;
+      background: #1a1a2e;
+      color: white;
+    }
+    
+    .input-field:focus {
+      outline: none;
+      border-color: #6366f1;
+    }
+    
+    .select-field {
+      padding: 10px 12px;
+      font-size: 0.95rem;
+      border: 2px solid #4a5568;
+      border-radius: 6px;
+      background: #1a1a2e;
+      color: white;
+      min-width: 100px;
+    }
+    
+    .time-field {
+      width: 100px;
+      padding: 10px 12px;
+      font-size: 0.95rem;
+      border: 2px solid #4a5568;
+      border-radius: 6px;
+      background: #1a1a2e;
+      color: white;
+    }
+    
+    .toggle {
+      position: relative;
+      width: 50px;
+      height: 28px;
+    }
+    
+    .toggle input {
+      opacity: 0;
+      width: 0;
+      height: 0;
+    }
+    
+    .toggle-slider {
+      position: absolute;
+      cursor: pointer;
+      inset: 0;
+      background: #4a5568;
+      border-radius: 28px;
+      transition: 0.3s;
+    }
+    
+    .toggle-slider:before {
+      position: absolute;
+      content: "";
+      height: 20px;
+      width: 20px;
+      left: 4px;
+      bottom: 4px;
+      background: white;
+      border-radius: 50%;
+      transition: 0.3s;
+    }
+    
+    .toggle input:checked + .toggle-slider {
+      background: #10b981;
+    }
+    
+    .toggle input:checked + .toggle-slider:before {
+      transform: translateX(22px);
+    }
+    
+    .delete-btn {
+      padding: 8px 12px;
+      font-size: 0.9rem;
+      border: none;
+      border-radius: 6px;
+      background: #ef4444;
+      color: white;
+      cursor: pointer;
+    }
+    
+    .delete-btn:hover {
+      background: #dc2626;
+    }
+    
+    .no-recipients {
+      text-align: center;
+      padding: 30px;
+      opacity: 0.6;
+    }
+    
+    /* Save section */
+    .save-section {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-top: 20px;
+      padding-top: 20px;
+      border-top: 1px solid #4a5568;
+    }
+    
+    .save-btn {
+      padding: 15px 40px;
+      font-size: 1.1rem;
+      font-weight: 600;
+      border: none;
+      border-radius: 8px;
+      background: #6366f1;
+      color: white;
+      cursor: pointer;
+    }
+    
+    .save-btn:hover {
+      background: #4f46e5;
+    }
+    
+    .save-btn:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+    }
+    
+    .feedback {
+      padding: 12px 20px;
+      border-radius: 8px;
+      display: none;
+    }
+    
+    .feedback.show {
+      display: block;
+    }
+    
+    .feedback.success {
+      background: #065f46;
+    }
+    
+    .feedback.error {
+      background: #7f1d1d;
+    }
+    
+    .loading {
+      text-align: center;
+      padding: 40px;
+      opacity: 0.6;
+    }
+    
+    /* Responsive */
+    @media (max-width: 768px) {
+      .recipients-table {
+        display: block;
+      }
+      
+      .recipients-table thead {
+        display: none;
+      }
+      
+      .recipients-table tbody {
+        display: block;
+      }
+      
+      .recipients-table tr {
+        display: block;
+        margin-bottom: 20px;
+        background: #1a1a2e;
+        padding: 15px;
+        border-radius: 8px;
+      }
+      
+      .recipients-table td {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 8px 0;
+        border-bottom: none;
+      }
+      
+      .recipients-table td::before {
+        content: attr(data-label);
+        font-weight: 600;
+        opacity: 0.7;
+        margin-right: 10px;
+      }
+      
+      .input-field, .select-field, .time-field {
+        width: auto;
+        flex: 1;
+        max-width: 200px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="header">
+    <h1>IESV Settings</h1>
+  </div>
+  
+  <div class="main">
+    <div class="section">
+      <div class="section-header">
+        <h2>End of Day Email Recipients</h2>
+        <button class="add-btn" id="addBtn">+ Add Recipient</button>
+      </div>
+      
+      <div id="tableContainer">
+        <div class="loading">Loading...</div>
+      </div>
+      
+      <div class="save-section">
+        <div class="feedback" id="feedback"></div>
+        <button class="save-btn" id="saveBtn">Save Changes</button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const API_URL = 'https://script.google.com/macros/s/AKfycbyGqqS1q6hvJEKpXRFLbqG01Pa_6uVVNCw6GHiUiFVc-5F2cMzd1ZRZqn-ZUL3Qq5hpGA/exec';
+    
+    const SCOPES = ['Full', '7A', '7B', '7C', '8A', '8B', '8C', '9A', '9B', '9C', '9D'];
+    
+    let recipients = [];
+    
+    const tableContainer = document.getElementById('tableContainer');
+    const addBtn = document.getElementById('addBtn');
+    const saveBtn = document.getElementById('saveBtn');
+    const feedback = document.getElementById('feedback');
+    
+    // Load on start
+    loadSettings();
+    
+    async function loadSettings() {
+      try {
+        const url = `${API_URL}?action=getSettings`;
+        const response = await fetch(url);
+        const result = await response.json();
+        
+        if (result.success) {
+          recipients = result.recipients || [];
+          renderTable();
+        } else {
+          tableContainer.innerHTML = `<div class="loading">Error: ${result.error}</div>`;
+        }
+      } catch (err) {
+        tableContainer.innerHTML = `<div class="loading">Failed to load: ${err.message}</div>`;
+      }
+    }
+    
+    function renderTable() {
+      if (recipients.length === 0) {
+        tableContainer.innerHTML = '<div class="no-recipients">No recipients configured. Click "Add Recipient" to add one.</div>';
+        return;
+      }
+      
+      let html = `
+        <table class="recipients-table">
+          <thead>
+            <tr>
+              <th>Email</th>
+              <th>Scope</th>
+              <th>Send Time</th>
+              <th>Active</th>
+              <th></th>
+            </tr>
+          </thead>
+          <tbody>
+      `;
+      
+      recipients.forEach((r, index) => {
+        html += `
+          <tr data-index="${index}">
+            <td data-label="Email">
+              <input type="email" class="input-field" value="${escapeHtml(r.email)}" data-field="email">
+            </td>
+            <td data-label="Scope">
+              <select class="select-field" data-field="scope">
+                ${SCOPES.map(s => `<option value="${s}" ${r.scope === s ? 'selected' : ''}>${s}</option>`).join('')}
+              </select>
+            </td>
+            <td data-label="Send Time">
+              <input type="time" class="time-field" value="${r.sendTime || '15:30'}" data-field="sendTime">
+            </td>
+            <td data-label="Active">
+              <label class="toggle">
+                <input type="checkbox" ${r.active ? 'checked' : ''} data-field="active">
+                <span class="toggle-slider"></span>
+              </label>
+            </td>
+            <td>
+              <button class="delete-btn" data-index="${index}">Delete</button>
+            </td>
+          </tr>
+        `;
+      });
+      
+      html += '</tbody></table>';
+      tableContainer.innerHTML = html;
+      
+      // Add event listeners
+      document.querySelectorAll('.recipients-table input, .recipients-table select').forEach(el => {
+        el.addEventListener('change', handleFieldChange);
+      });
+      
+      document.querySelectorAll('.delete-btn').forEach(btn => {
+        btn.addEventListener('click', () => deleteRecipient(parseInt(btn.dataset.index)));
+      });
+    }
+    
+    function handleFieldChange(e) {
+      const row = e.target.closest('tr');
+      const index = parseInt(row.dataset.index);
+      const field = e.target.dataset.field;
+      
+      if (field === 'active') {
+        recipients[index][field] = e.target.checked;
+      } else {
+        recipients[index][field] = e.target.value;
+      }
+    }
+    
+    // Add recipient
+    addBtn.addEventListener('click', () => {
+      recipients.push({
+        email: '',
+        scope: 'Full',
+        sendTime: '15:30',
+        active: true
+      });
+      renderTable();
+      
+      // Focus new email field
+      const inputs = document.querySelectorAll('.input-field[data-field="email"]');
+      if (inputs.length) {
+        inputs[inputs.length - 1].focus();
+      }
+    });
+    
+    // Delete recipient
+    function deleteRecipient(index) {
+      if (confirm('Delete this recipient?')) {
+        recipients.splice(index, 1);
+        renderTable();
+      }
+    }
+    
+    // Save
+    saveBtn.addEventListener('click', saveSettings);
+    
+    async function saveSettings() {
+      // Validate
+      for (const r of recipients) {
+        if (!r.email || !r.email.includes('@')) {
+          showFeedback('Please enter valid email addresses', 'error');
+          return;
+        }
+      }
+      
+      saveBtn.disabled = true;
+      
+      try {
+        const url = `${API_URL}?action=saveSettings&settings=${encodeURIComponent(JSON.stringify(recipients))}`;
+        const response = await fetch(url);
+        const result = await response.json();
+        
+        if (result.success) {
+          showFeedback('Settings saved', 'success');
+        } else {
+          showFeedback(`Error: ${result.error}`, 'error');
+        }
+      } catch (err) {
+        showFeedback(`Failed: ${err.message}`, 'error');
+      }
+      
+      saveBtn.disabled = false;
+    }
+    
+    function showFeedback(message, type) {
+      feedback.textContent = message;
+      feedback.className = `feedback show ${type}`;
+      
+      setTimeout(() => {
+        feedback.classList.remove('show');
+      }, 4000);
+    }
+    
+    function escapeHtml(text) {
+      const div = document.createElement('div');
+      div.textContent = text || '';
+      return div.innerHTML;
+    }
+  </script>
+</body>
+</html>
