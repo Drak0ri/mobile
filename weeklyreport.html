@@ -310,15 +310,15 @@
       summarySection.innerHTML = '';
       
       try {
-        // Get Monday and Friday of the week
+        // Get Monday and Sunday of the week
         const monday = getMondayOfWeek(parseInt(year), week);
-        const friday = new Date(monday);
-        friday.setDate(friday.getDate() + 4);
+        const sunday = new Date(monday);
+        sunday.setDate(sunday.getDate() + 6);  // Changed from +4 (Friday) to +6 (Sunday)
         
         // Fetch roster and scan logs
         const [rosterRes, logsRes] = await Promise.all([
           fetch(`${API_URL}?action=getRoster`),
-          fetch(`${API_URL}?action=getWeeklyLogs&startDate=${monday.toISOString().split('T')[0]}&endDate=${friday.toISOString().split('T')[0]}`)
+          fetch(`${API_URL}?action=getWeeklyLogs&startDate=${monday.toISOString().split('T')[0]}&endDate=${sunday.toISOString().split('T')[0]}`)
         ]);
         
         const roster = await rosterRes.json();
@@ -444,7 +444,7 @@
         <tr>
           <td>${student.name}</td>
           <td>${student.class}</td>
-          <td>${student.daysCheckedIn} / 5 days</td>
+          <td>${student.daysCheckedIn} / 7 days</td>
           <td>
             <span class="status-badge ${student.currentStatus === 'IN' ? 'checked-in' : 'not-checked-in'}">
               ${student.currentStatus}
@@ -490,7 +490,7 @@
       
       let csv = 'Student Name,Class,Days Checked In,Current Status,Weekly Summary\n';
       currentData.forEach(student => {
-        csv += `"${student.name}","${student.class}","${student.daysCheckedIn} / 5","${student.currentStatus}","${student.weeklyStatus}"\n`;
+        csv += `"${student.name}","${student.class}","${student.daysCheckedIn} / 7","${student.currentStatus}","${student.weeklyStatus}"\n`;
       });
       
       const blob = new Blob([csv], { type: 'text/csv' });
