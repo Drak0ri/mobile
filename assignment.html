@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>IESV Tag Assignment</title>
-  <link rel="icon" href="ies. ico">
+  <link rel="icon" href="ies.ico">
   <style>
     * {
       box-sizing: border-box;
@@ -44,7 +44,7 @@
     
     .section h2 {
       margin-bottom: 20px;
-      font-size: 1.2rem;
+      font-size:  1.2rem;
       padding-bottom: 15px;
       border-bottom:  1px solid #4a5568;
     }
@@ -53,10 +53,10 @@
     .search-input {
       width: 100%;
       padding: 15px;
-      font-size:  1rem;
-      border:  2px solid #4a5568;
-      border-radius:  8px;
-      background:  #1a1a2e;
+      font-size: 1rem;
+      border: 2px solid #4a5568;
+      border-radius: 8px;
+      background: #1a1a2e;
       color: white;
     }
     
@@ -158,7 +158,7 @@
     }
     
     .tag-type {
-      font-size:  0.8rem;
+      font-size: 0.8rem;
       opacity: 0.6;
     }
     
@@ -204,7 +204,7 @@
     
     .tag-input {
       flex: 1;
-      min-width: 200px;
+      min-width:  200px;
       padding: 12px 15px;
       font-size: 1rem;
       font-family: monospace;
@@ -230,12 +230,12 @@
     
     .assign-btn {
       padding: 12px 25px;
-      font-size: 1rem;
-      font-weight:  600;
+      font-size:  1rem;
+      font-weight: 600;
       border: none;
       border-radius: 8px;
       background: #10b981;
-      color:  white;
+      color: white;
       cursor: pointer;
     }
     
@@ -250,7 +250,7 @@
     
     .scan-hint {
       margin-top: 12px;
-      font-size: 0.85rem;
+      font-size:  0.85rem;
       opacity: 0.6;
     }
     
@@ -282,8 +282,8 @@
     }
     
     .scan-active {
-      border-color: #10b981 ! important;
-      animation: pulse 1.5s infinite;
+      border-color: #10b981 !important;
+      animation: pulse 1. 5s infinite;
     }
     
     @keyframes pulse {
@@ -294,7 +294,7 @@
 </head>
 <body>
   <div class="header">
-    <a href="index.html"><img src="ies-logo-removebg-preview.png" alt="IES Logo" style="height:  40px;"></a>
+    <a href="index.html"><img src="ies-logo-removebg-preview.png" alt="IES Logo" style="height: 40px;"></a>
     <h1>🏷️ IESV Tag Assignment</h1>
   </div>
   
@@ -308,7 +308,7 @@
     
     <!-- Selected student section -->
     <div class="section selected-section" id="selectedSection">
-      <h2>2. Manage Tags</h2>
+      <h2>2.  Manage Tags</h2>
       
       <div class="student-header">
         <span class="student-name" id="studentName">--</span>
@@ -362,8 +362,10 @@
         const url = `${API_URL}?action=getRoster`;
         const response = await fetch(url);
         const result = await response.json();
+        console.log('Roster response:', result);  // DEBUG
         if (result.success) {
-          students = result.data;  // ← FIXED: Changed from result.students to result.data
+          students = result. data;
+          console.log('Loaded students:', students. length);  // DEBUG
         }
       } catch (err) {
         console.error('Failed to load students:', err);
@@ -374,13 +376,13 @@
     searchInput.addEventListener('input', () => {
       const query = searchInput.value.toLowerCase().trim();
       
-      if (query.length < 2) {
+      if (query. length < 2) {
         searchResults.innerHTML = '';
         return;
       }
       
       const matches = students.filter(s => 
-        s.name.toLowerCase().includes(query) || 
+        s.name. toLowerCase().includes(query) || 
         s.class.toLowerCase().includes(query)
       ).slice(0, 20);
       
@@ -389,7 +391,7 @@
         return;
       }
       
-      searchResults.innerHTML = matches.map(s => {
+      searchResults. innerHTML = matches.map(s => {
         const tagCount = countTags(s);
         return `
           <div class="search-result" data-id="${s.id}">
@@ -397,19 +399,19 @@
               <div class="result-name">${escapeHtml(s.name)}</div>
               <div class="result-class">${s.class}</div>
             </div>
-            <div class="result-tags">${tagCount} tag${tagCount !== 1 ?  's' : ''}</div>
+            <div class="result-tags">${tagCount} tag${tagCount !== 1 ? 's' :  ''}</div>
           </div>
         `;
       }).join('');
       
       document.querySelectorAll('.search-result').forEach(el => {
-        el.addEventListener('click', () => selectStudent(el.dataset. id));
+        el.addEventListener('click', () => selectStudent(el.dataset.id));
       });
     });
     
     function countTags(student) {
       let count = 0;
-      if (student.rfid) count++;  // ← FIXED: Changed from primaryRfid to rfid
+      if (student.rfid) count++;
       if (student.additionalRfids) {
         count += student.additionalRfids.split(',').filter(t => t.trim()).length;
       }
@@ -421,6 +423,7 @@
       if (!student) return;
       
       selectedStudent = student;
+      console.log('Selected student:', selectedStudent);  // DEBUG
       
       document.querySelectorAll('.search-result').forEach(el => {
         el.classList.toggle('selected', el.dataset.id === String(id));
@@ -428,7 +431,7 @@
       
       selectedSection.classList.add('show');
       studentName.textContent = student.name;
-      studentClass.textContent = student.class;
+      studentClass. textContent = student.class;
       
       renderTags();
       feedback.classList.remove('show');
@@ -441,7 +444,7 @@
       
       let html = '';
       
-      if (selectedStudent.rfid) {  // ← FIXED: Changed from primaryRfid to rfid
+      if (selectedStudent.rfid) {
         html += `
           <div class="tag-item">
             <span class="tag-id">${escapeHtml(selectedStudent.rfid)}</span>
@@ -456,7 +459,7 @@
         additional.forEach(tag => {
           html += `
             <div class="tag-item">
-              <span class="tag-id">${escapeHtml(tag.trim())}</span>
+              <span class="tag-id">${escapeHtml(tag. trim())}</span>
               <span class="tag-type">(Additional)</span>
               <button class="tag-remove" data-tag="${escapeHtml(tag.trim())}">&times;</button>
             </div>
@@ -485,7 +488,7 @@
     });
     
     // Visual feedback when input focused
-    tagInput.addEventListener('focus', () => tagInput.classList. add('scan-active'));
+    tagInput.addEventListener('focus', () => tagInput.classList.add('scan-active'));
     tagInput.addEventListener('blur', () => tagInput.classList.remove('scan-active'));
     
     // Assign button
@@ -500,16 +503,20 @@
       const isPrimary = tagType.value === 'primary';
       
       try {
-        const url = `${API_URL}?action=assignTag&studentId=${encodeURIComponent(selectedStudent. id)}&tagId=${encodeURIComponent(tagId)}&isPrimary=${isPrimary}`;
+        // CHANGED: Use student.name instead of student.id to match backend
+        const url = `${API_URL}?action=assignTag&studentName=${encodeURIComponent(selectedStudent.name)}&tagId=${encodeURIComponent(tagId)}&isPrimary=${isPrimary}`;
+        console.log('Assignment URL:', url);  // DEBUG
+        
         const response = await fetch(url);
-        const result = await response.json();
+        const result = await response. json();
+        console.log('Assignment result:', result);  // DEBUG
         
         if (result.success) {
           showFeedback('Tag assigned successfully', 'success');
           
           // Update local data
           if (isPrimary) {
-            selectedStudent.rfid = tagId;  // ← FIXED: Changed from primaryRfid to rfid
+            selectedStudent.rfid = tagId;
           } else {
             const existing = selectedStudent.additionalRfids ?  selectedStudent.additionalRfids.split(',').filter(t => t.trim()) : [];
             existing.push(tagId);
@@ -520,9 +527,10 @@
           tagInput.value = '';
           tagInput.focus();
         } else {
-          showFeedback(result.error, 'error');
+          showFeedback(result.error || result.message || 'Assignment failed', 'error');
         }
       } catch (err) {
+        console.error('Assignment error:', err);  // DEBUG
         showFeedback(`Failed:  ${err.message}`, 'error');
       }
       
@@ -534,26 +542,31 @@
       if (! confirm(`Remove tag ${tagId}?`)) return;
       
       try {
-        const url = `${API_URL}?action=unassignTag&studentId=${encodeURIComponent(selectedStudent. id)}&tagId=${encodeURIComponent(tagId)}`;
+        // CHANGED: Use student.name instead of student.id to match backend
+        const url = `${API_URL}?action=unassignTag&studentName=${encodeURIComponent(selectedStudent. name)}&tagId=${encodeURIComponent(tagId)}`;
+        console.log('Unassignment URL:', url);  // DEBUG
+        
         const response = await fetch(url);
         const result = await response.json();
+        console.log('Unassignment result:', result);  // DEBUG
         
-        if (result.success) {
+        if (result. success) {
           showFeedback('Tag removed', 'success');
           
           // Update local data
-          if (selectedStudent.rfid === tagId) {  // ← FIXED: Changed from primaryRfid to rfid
-            selectedStudent.rfid = '';
+          if (selectedStudent.rfid === tagId) {
+            selectedStudent. rfid = '';
           } else {
-            const additional = selectedStudent.additionalRfids.split(',').filter(t => t.trim() && t. trim() !== tagId);
+            const additional = selectedStudent.additionalRfids. split(',').filter(t => t.trim() && t. trim() !== tagId);
             selectedStudent.additionalRfids = additional.join(',');
           }
           
           renderTags();
         } else {
-          showFeedback(result.error, 'error');
+          showFeedback(result.error || result. message || 'Remove failed', 'error');
         }
       } catch (err) {
+        console.error('Unassignment error:', err);  // DEBUG
         showFeedback(`Failed: ${err.message}`, 'error');
       }
     }
