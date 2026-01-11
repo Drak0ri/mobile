@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Weekly Report - IESV Phone Check-In</title>
-  <link rel="icon" href="ies.ico">
+  <link rel="icon" href="ies. ico">
   <style>
     * {
       margin: 0;
@@ -14,7 +14,7 @@
     
     body {
       font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-      background: linear-gradient(135deg, #0f0c29, #302b63, #24243e);
+      background:  linear-gradient(135deg, #0f0c29, #302b63, #24243e);
       color: white;
       min-height: 100vh;
       display: flex;
@@ -46,7 +46,7 @@
     .controls {
       background: #16213e;
       padding: 25px;
-      border-radius: 12px;
+      border-radius:  12px;
       margin-bottom: 25px;
       display: flex;
       align-items: center;
@@ -125,8 +125,8 @@
       text-align: center;
     }
     
-    .summary-card .number {
-      font-size: 2.5rem;
+    .summary-card . number {
+      font-size:  2.5rem;
       font-weight: bold;
       margin-bottom: 5px;
     }
@@ -136,10 +136,10 @@
       color: #a0aec0;
     }
     
-    .summary-card.checked-in .number { color: #10b981; }
+    .summary-card.checked-in . number { color: #10b981; }
     .summary-card.not-checked-in .number { color: #ef4444; }
-    .summary-card.rate .number { color: #667eea; }
-    .summary-card.current-in .number { color: #10b981; }
+    .summary-card.rate . number { color: #667eea; }
+    . summary-card.current-in . number { color: #10b981; }
     .summary-card.current-out .number { color: #ef4444; }
     
     .report-table {
@@ -159,11 +159,11 @@
     
     th {
       padding: 18px 20px;
-      text-align: left;
-      font-weight: 600;
+      text-align:  left;
+      font-weight:  600;
       font-size: 0.95rem;
-      text-transform: uppercase;
-      letter-spacing: 0.5px;
+      text-transform:  uppercase;
+      letter-spacing:  0.5px;
       color: #a0aec0;
     }
     
@@ -183,9 +183,9 @@
     .status-badge {
       display: inline-block;
       padding: 6px 14px;
-      border-radius: 20px;
+      border-radius:  20px;
       font-size: 0.85rem;
-      font-weight: 600;
+      font-weight:  600;
     }
     
     .status-badge.checked-in {
@@ -221,7 +221,7 @@
     }
     
     .empty-state-icon {
-      font-size: 4rem;
+      font-size:  4rem;
       margin-bottom: 15px;
     }
   </style>
@@ -254,7 +254,7 @@
     function getISOWeek(date) {
       const d = new Date(date);
       d.setHours(0, 0, 0, 0);
-      d.setDate(d.getDate() + 4 - (d.getDay() || 7));
+      d.setDate(d. getDate() + 4 - (d.getDay() || 7));
       const yearStart = new Date(d.getFullYear(), 0, 1);
       return Math.ceil((((d - yearStart) / 86400000) + 1) / 7);
     }
@@ -290,7 +290,7 @@
       const dow = simple.getDay();
       const isoWeekStart = simple;
       if (dow <= 4) {
-        isoWeekStart.setDate(simple.getDate() - simple.getDay() + 1);
+        isoWeekStart. setDate(simple.getDate() - simple.getDay() + 1);
       } else {
         isoWeekStart.setDate(simple.getDate() + 8 - simple.getDay());
       }
@@ -321,13 +321,13 @@
           fetch(`${API_URL}?action=getRoster`),
           fetch(`${API_URL}?action=getWeeklyLogs&startDate=${monday.toISOString().split('T')[0]}&endDate=${sunday.toISOString().split('T')[0]}`)
         ]);
-
-console.log('Raw logs response:', logs);
-console.log('logs.data:', logs. data);
-console.log('logs.data type:', typeof logs.data, 'isArray:', Array. isArray(logs.data));
         
         const roster = await rosterRes.json();
         const logs = await logsRes.json();
+        
+        console.log('Raw logs response:', logs);
+        console.log('logs.data:', logs.data);
+        console.log('logs.data type:', typeof logs.data, 'isArray:', Array. isArray(logs.data));
         
         if (!roster.success || !logs.success) {
           throw new Error('Failed to load data');
@@ -341,7 +341,7 @@ console.log('logs.data type:', typeof logs.data, 'isArray:', Array. isArray(logs
         displayTable(currentData);
         
       } catch (error) {
-        reportSection.innerHTML = `<div class="error">❌ Error loading report: ${error.message}</div>`;
+        reportSection.innerHTML = `<div class="error">❌ Error loading report: ${error. message}</div>`;
       }
     }
 
@@ -365,13 +365,13 @@ console.log('logs.data type:', typeof logs.data, 'isArray:', Array. isArray(logs
       });
       
       console.log('Check-ins by student:', checkInsByStudent);
-console.log('Sample roster entry:', roster[0]);
-console.log('Total students in roster:', roster.length);
-console.log('Students with check-ins:', Object.keys(checkInsByStudent).length);
+      console.log('Sample roster entry:', roster[0]);
+      console.log('Total students in roster:', roster.length);
+      console.log('Students with check-ins:', Object.keys(checkInsByStudent).length);
       
       // Create report rows
       roster.forEach(student => {
-        const studentId = String(student.id);
+        const studentId = String(student. id);
         const daysCheckedIn = checkInsByStudent[studentId]?.size || 0;
         const currentStatus = student.status || 'OUT';
         
@@ -399,10 +399,10 @@ console.log('Students with check-ins:', Object.keys(checkInsByStudent).length);
 
     // Display summary cards
     function displaySummary(data) {
-      const weeklyCheckedIn = data.filter(s => s.daysCheckedIn > 0).length;
+      const weeklyCheckedIn = data.filter(s => s. daysCheckedIn > 0).length;
       const weeklyNotCheckedIn = data.filter(s => s.daysCheckedIn === 0).length;
       const currentIn = data.filter(s => s.currentStatus === 'IN').length;
-      const currentOut = data.filter(s => s.currentStatus === 'OUT').length;
+      const currentOut = data.filter(s => s. currentStatus === 'OUT').length;
       const rate = data.length > 0 ? ((weeklyCheckedIn / data.length) * 100).toFixed(1) : 0;
       
       const summarySection = document.getElementById('summarySection');
@@ -437,7 +437,7 @@ console.log('Students with check-ins:', Object.keys(checkInsByStudent).length);
       const reportSection = document.getElementById('reportSection');
       
       if (data.length === 0) {
-        reportSection.innerHTML = `
+        reportSection. innerHTML = `
           <div class="empty-state">
             <div class="empty-state-icon">📭</div>
             <h2>No Data Available</h2>
@@ -458,14 +458,14 @@ console.log('Students with check-ins:', Object.keys(checkInsByStudent).length);
             </span>
           </td>
           <td>
-            <span class="status-badge ${student.daysCheckedIn > 0 ? 'checked-in' : 'not-checked-in'}">
+            <span class="status-badge ${student. daysCheckedIn > 0 ? 'checked-in' :  'not-checked-in'}">
               ${student.weeklyStatus}
             </span>
           </td>
         </tr>
       `).join('');
       
-      reportSection.innerHTML = `
+      reportSection. innerHTML = `
         <div class="report-table">
           <table>
             <thead>
@@ -497,14 +497,14 @@ console.log('Students with check-ins:', Object.keys(checkInsByStudent).length);
       
       let csv = 'Student Name,Class,Days Checked In,Current Status,Weekly Summary\n';
       currentData.forEach(student => {
-        csv += `"${student.name}","${student.class}","${student.daysCheckedIn} / 7","${student.currentStatus}","${student.weeklyStatus}"\n`;
+        csv += `"${student.name}","${student.class}","${student. daysCheckedIn} / 7","${student.currentStatus}","${student.weeklyStatus}"\n`;
       });
       
       const blob = new Blob([csv], { type: 'text/csv' });
       const url = window.URL.createObjectURL(blob);
-      const a = document.createElement('a');
+      const a = document. createElement('a');
       a.href = url;
-      a.download = `phone-checkin-week-${weekText.replace('Week ', '')}.csv`;
+      a. download = `phone-checkin-week-${weekText. replace('Week ', '')}.csv`;
       a.click();
       window.URL.revokeObjectURL(url);
     }
