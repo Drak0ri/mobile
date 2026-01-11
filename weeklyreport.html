@@ -268,20 +268,16 @@
     function populateWeekSelector() {
       const select = document.getElementById('weekSelect');
       const today = new Date();
+      const currentWeek = getISOWeek(today);
+      const currentYear = getISOYear(today);
       
-      // Generate last 12 weeks
-      for (let i = 0; i < 12; i++) {
-        const date = new Date(today);
-        date.setDate(date.getDate() - (i * 7));
-        
-        const weekNum = getISOWeek(date);
-        const year = getISOYear(date);
-        
+      // Generate from week 1 up to current week
+      for (let weekNum = 1; weekNum <= currentWeek; weekNum++) {
         const option = document.createElement('option');
-        option.value = `${year}-W${String(weekNum).padStart(2, '0')}`;
-        option.textContent = `Week ${weekNum} - ${year}`;
+        option.value = `${currentYear}-W${String(weekNum).padStart(2, '0')}`;
+        option.textContent = `Week ${weekNum}`;
         
-        if (i === 0) option.selected = true;
+        if (weekNum === currentWeek) option.selected = true;
         select.appendChild(option);
       }
     }
@@ -469,7 +465,7 @@
       const url = window.URL.createObjectURL(blob);
       const a = document.createElement('a');
       a.href = url;
-      a.download = `phone-checkin-${weekText.replace(/\s/g, '-')}.csv`;
+      a.download = `phone-checkin-week-${weekText.replace('Week ', '')}.csv`;
       a.click();
       window.URL.revokeObjectURL(url);
     }
