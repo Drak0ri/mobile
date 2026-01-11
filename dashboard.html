@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>IESV Dashboard</title>
-  <link rel="icon" href="ies.ico">
+    <link rel="icon" href="ies.ico">
   <style>
     * {
       box-sizing: border-box;
@@ -154,6 +154,17 @@
       display: flex;
       align-items: center;
       gap: 12px;
+      cursor: pointer;
+      transition: background 0.2s;
+    }
+    
+    .student-card:hover {
+      background: #1e2a4a;
+    }
+    
+    .student-card.updating {
+      opacity: 0.5;
+      pointer-events: none;
     }
     
     .student-dot {
@@ -305,7 +316,7 @@
             </div>
             <div class="students-grid">
               ${classStudents.map(s => `
-                <div class="student-card">
+                <div class="student-card" data-id="${s.id}" data-status="${s.status}">
                   <div class="student-dot ${s.status === 'IN' ? 'in' : 'out'}"></div>
                   <div class="student-name">${escapeHtml(s.name)}</div>
                 </div>
@@ -316,6 +327,64 @@
       });
       
       main.innerHTML = html;
+      
+      // Add click handlers for toggling
+      document.querySelectorAll('.student-card').forEach(card => {
+        card.addEventListener('click', () => toggleStudent(card));
+      });
+    }
+    
+    async function toggleStudent(card) {
+      const id = card.dataset.id;
+      const currentStatus = card.dataset.status;
+      const newStatus = currentStatus === 'IN' ? 'OUT' : 'IN';
+      
+      card.classList.add('updating');
+      
+      try {
+        const url = `${API_URL}?action=override&studentId=${encodeURIComponent(id)}&newStatus=${newStatus}`;
+        const response = await fetch(url);
+        const result = await response.json();
+        
+        if (result.success) {
+          // Update local data
+          const student = students.find(s => String(s.id) === String(id));
+          if (student) {
+            student.status = result.student.status;
+          }
+          
+          // Update card
+          card.dataset.status = result.student.status;
+          const dot = card.querySelector('.student-dot');
+          dot.className = `student-dot ${result.student.status === 'IN' ? 'in' : 'out'}`;
+          
+          // Update stats
+          renderStats();
+        }
+      } catch (err) {
+        console.error('Toggle failed:', err);
+      }
+      
+      card.classList.remove('updating');
+    }
+    
+    function renderStats() {
+      let filtered = students;
+      if (currentYear) {
+        filtered = students.filter(s => s.class.startsWith(currentYear));
+      }
+      const inCount = filtered.filter(s => s.status === 'IN').length;
+      const outCount = filtered.filter(s => s.status !== 'IN').length;
+      statIn.textContent = inCount;
+      statOut.textContent = outCount;
+      
+      // Update class stats
+      document.querySelectorAll('.class-section').forEach(section => {
+        const cls = section.querySelector('.class-header span').textContent;
+        const cards = section.querySelectorAll('.student-card');
+        const classIn = Array.from(cards).filter(c => c.dataset.status === 'IN').length;
+        section.querySelector('.class-stats').textContent = `${classIn}/${cards.length} in`;
+      });
     }
     
     function escapeHtml(text) {
