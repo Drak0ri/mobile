@@ -314,6 +314,7 @@
         const monday = getMondayOfWeek(parseInt(year), week);
         const sunday = new Date(monday);
         sunday.setDate(sunday.getDate() + 6);  // Changed from +4 (Friday) to +6 (Sunday)
+        console.log('Date range for Week 2:', monday. toISOString().split('T')[0], 'to', sunday. toISOString().split('T')[0]);
         
         // Fetch roster and scan logs
         const [rosterRes, logsRes] = await Promise.all([
