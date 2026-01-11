@@ -360,7 +360,9 @@
       });
       
       console.log('Check-ins by student:', checkInsByStudent);
-      console.log('Sample roster entry:', roster[0]);
+console.log('Sample roster entry:', roster[0]);
+console.log('Total students in roster:', roster.length);
+console.log('Students with check-ins:', Object.keys(checkInsByStudent).length);
       
       // Create report rows
       roster.forEach(student => {
