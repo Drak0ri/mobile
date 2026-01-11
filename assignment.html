@@ -44,7 +44,7 @@
     
     .section h2 {
       margin-bottom: 20px;
-      font-size:  1.2rem;
+      font-size: 1.2rem;
       padding-bottom: 15px;
       border-bottom:  1px solid #4a5568;
     }
@@ -60,7 +60,7 @@
       color: white;
     }
     
-    .search-input: focus {
+    .search-input:focus {
       outline: none;
       border-color: #6366f1;
     }
@@ -148,7 +148,7 @@
       background: #1a1a2e;
       padding: 10px 15px;
       border-radius: 8px;
-      margin-right:  10px;
+      margin-right: 10px;
       margin-bottom: 10px;
     }
     
@@ -158,7 +158,7 @@
     }
     
     .tag-type {
-      font-size: 0.8rem;
+      font-size:  0.8rem;
       opacity: 0.6;
     }
     
@@ -191,7 +191,7 @@
     }
     
     .scan-section h3 {
-      margin-bottom: 15px;
+      margin-bottom:  15px;
       font-size: 1rem;
     }
     
@@ -283,7 +283,7 @@
     
     .scan-active {
       border-color: #10b981 !important;
-      animation: pulse 1. 5s infinite;
+      animation: pulse 1.5s infinite;
     }
     
     @keyframes pulse {
@@ -302,7 +302,7 @@
     <!-- Search section -->
     <div class="section">
       <h2>1. Select Student</h2>
-      <input type="text" class="search-input" id="searchInput" placeholder="Type student name or class...">
+      <input type="text" class="search-input" id="searchInput" placeholder="Type student name or class... ">
       <div class="search-results" id="searchResults"></div>
     </div>
     
@@ -362,10 +362,10 @@
         const url = `${API_URL}?action=getRoster`;
         const response = await fetch(url);
         const result = await response.json();
-        console.log('Roster response:', result);  // DEBUG
+        console.log('Roster response:', result);
         if (result.success) {
-          students = result. data;
-          console.log('Loaded students:', students. length);  // DEBUG
+          students = result.data;
+          console.log('Loaded students:', students. length);
         }
       } catch (err) {
         console.error('Failed to load students:', err);
@@ -423,7 +423,7 @@
       if (!student) return;
       
       selectedStudent = student;
-      console.log('Selected student:', selectedStudent);  // DEBUG
+      console.log('Selected student:', selectedStudent);
       
       document.querySelectorAll('.search-result').forEach(el => {
         el.classList.toggle('selected', el.dataset.id === String(id));
@@ -503,13 +503,12 @@
       const isPrimary = tagType.value === 'primary';
       
       try {
-        // CHANGED: Use student.name instead of student.id to match backend
-        const url = `${API_URL}?action=assignTag&studentName=${encodeURIComponent(selectedStudent.name)}&tagId=${encodeURIComponent(tagId)}&isPrimary=${isPrimary}`;
-        console.log('Assignment URL:', url);  // DEBUG
+        const url = `${API_URL}?action=assignTag&studentId=${encodeURIComponent(selectedStudent. id)}&tagId=${encodeURIComponent(tagId)}&isPrimary=${isPrimary}`;
+        console.log('Assignment URL:', url);
         
         const response = await fetch(url);
-        const result = await response. json();
-        console.log('Assignment result:', result);  // DEBUG
+        const result = await response.json();
+        console.log('Assignment result:', result);
         
         if (result.success) {
           showFeedback('Tag assigned successfully', 'success');
@@ -530,7 +529,7 @@
           showFeedback(result.error || result.message || 'Assignment failed', 'error');
         }
       } catch (err) {
-        console.error('Assignment error:', err);  // DEBUG
+        console.error('Assignment error:', err);
         showFeedback(`Failed:  ${err.message}`, 'error');
       }
       
@@ -542,22 +541,21 @@
       if (! confirm(`Remove tag ${tagId}?`)) return;
       
       try {
-        // CHANGED: Use student.name instead of student.id to match backend
-        const url = `${API_URL}?action=unassignTag&studentName=${encodeURIComponent(selectedStudent. name)}&tagId=${encodeURIComponent(tagId)}`;
-        console.log('Unassignment URL:', url);  // DEBUG
+        const url = `${API_URL}?action=unassignTag&studentId=${encodeURIComponent(selectedStudent. id)}&tagId=${encodeURIComponent(tagId)}`;
+        console.log('Unassignment URL:', url);
         
         const response = await fetch(url);
         const result = await response.json();
-        console.log('Unassignment result:', result);  // DEBUG
+        console.log('Unassignment result:', result);
         
-        if (result. success) {
+        if (result.success) {
           showFeedback('Tag removed', 'success');
           
           // Update local data
           if (selectedStudent.rfid === tagId) {
             selectedStudent. rfid = '';
           } else {
-            const additional = selectedStudent.additionalRfids. split(',').filter(t => t.trim() && t. trim() !== tagId);
+            const additional = selectedStudent.additionalRfids.split(',').filter(t => t.trim() && t. trim() !== tagId);
             selectedStudent.additionalRfids = additional.join(',');
           }
           
@@ -566,7 +564,7 @@
           showFeedback(result.error || result. message || 'Remove failed', 'error');
         }
       } catch (err) {
-        console.error('Unassignment error:', err);  // DEBUG
+        console.error('Unassignment error:', err);
         showFeedback(`Failed: ${err.message}`, 'error');
       }
     }
