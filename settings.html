@@ -147,9 +147,9 @@
       position: absolute;
       cursor: pointer;
       inset: 0;
-      background: #ef4444 !important;
+      background-color: #ef4444;
       border-radius: 28px;
-      transition: 0.3s;
+      transition: background-color 0.3s;
     }
     
     .toggle-slider:before {
@@ -159,13 +159,13 @@
       width: 20px;
       left: 4px;
       bottom: 4px;
-      background: white;
+      background-color: white;
       border-radius: 50%;
-      transition: 0.3s;
+      transition: transform 0.3s;
     }
     
     .toggle input:checked + .toggle-slider {
-      background: #10b981 !important;
+      background-color: #10b981;
     }
     
     .toggle input:checked + .toggle-slider:before {
