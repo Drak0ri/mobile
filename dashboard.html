@@ -16,7 +16,10 @@
       font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
       background: #1a1a2e;
       color: white;
-      min-height: 100vh;
+      height: 100vh;
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
     }
     
     .header {
@@ -118,10 +121,17 @@
     
     .main {
       padding: 20px;
+      flex: 1;
+      overflow: auto;
+      display: flex;
+      flex-direction: column;
     }
     
     .class-section {
-      margin-bottom: 30px;
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      margin-bottom: 20px;
     }
     
     .class-header {
@@ -143,23 +153,26 @@
     
     .students-grid {
       display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
-      gap: 10px;
+      grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+      gap: 15px;
+      flex: 1;
+      align-content: start;
     }
     
     .student-card {
       background: #16213e;
-      padding: 12px 15px;
-      border-radius: 8px;
+      padding: 20px 25px;
+      border-radius: 10px;
       display: flex;
       align-items: center;
-      gap: 12px;
+      gap: 15px;
       cursor: pointer;
-      transition: background 0.2s;
+      transition: background 0.2s, transform 0.1s;
     }
     
     .student-card:hover {
       background: #1e2a4a;
+      transform: scale(1.02);
     }
     
     .student-card.updating {
@@ -167,9 +180,20 @@
       pointer-events: none;
     }
     
+    .student-card.error {
+      animation: shake 0.5s;
+      background: #7f1d1d;
+    }
+    
+    @keyframes shake {
+      0%, 100% { transform: translateX(0); }
+      25% { transform: translateX(-5px); }
+      75% { transform: translateX(5px); }
+    }
+    
     .student-dot {
-      width: 14px;
-      height: 14px;
+      width: 20px;
+      height: 20px;
       border-radius: 50%;
       flex-shrink: 0;
     }
@@ -178,7 +202,7 @@
     .student-dot.out { background: #ef4444; }
     
     .student-name {
-      font-size: 0.95rem;
+      font-size: 1.1rem;
       white-space: nowrap;
       overflow: hidden;
       text-overflow: ellipsis;
@@ -236,6 +260,8 @@
     
     let currentYear = '7';
     let students = [];
+    let pendingUpdates = 0;
+    let autoRefreshTimer = null;
     
     const main = document.getElementById('main');
     const statIn = document.getElementById('statIn');
@@ -340,7 +366,15 @@
       const currentStatus = card.dataset.status;
       const newStatus = currentStatus === 'IN' ? 'OUT' : 'IN';
       
+      // Pause auto-refresh while updating
+      pendingUpdates++;
+      
       card.classList.add('updating');
+      
+      // Optimistically update UI
+      card.dataset.status = newStatus;
+      const dot = card.querySelector('.student-dot');
+      dot.className = `student-dot ${newStatus === 'IN' ? 'in' : 'out'}`;
       
       try {
         const url = `${API_URL}?action=override&studentId=${encodeURIComponent(id)}&newStatus=${newStatus}`;
@@ -354,19 +388,31 @@
             student.status = result.student.status;
           }
           
-          // Update card
+          // Confirm card update
           card.dataset.status = result.student.status;
-          const dot = card.querySelector('.student-dot');
           dot.className = `student-dot ${result.student.status === 'IN' ? 'in' : 'out'}`;
           
           // Update stats
           renderStats();
+        } else {
+          // Revert on failure
+          card.dataset.status = currentStatus;
+          dot.className = `student-dot ${currentStatus === 'IN' ? 'in' : 'out'}`;
+          card.classList.add('error');
+          setTimeout(() => card.classList.remove('error'), 500);
+          console.error('Toggle failed:', result.error);
         }
       } catch (err) {
+        // Revert on error
+        card.dataset.status = currentStatus;
+        dot.className = `student-dot ${currentStatus === 'IN' ? 'in' : 'out'}`;
+        card.classList.add('error');
+        setTimeout(() => card.classList.remove('error'), 500);
         console.error('Toggle failed:', err);
       }
       
       card.classList.remove('updating');
+      pendingUpdates--;
     }
     
     function renderStats() {
@@ -394,8 +440,16 @@
       return div.innerHTML;
     }
     
-    // Auto-refresh every 30 seconds
-    setInterval(loadData, 30000);
+    // Auto-refresh every 30 seconds (skip if updates pending)
+    function startAutoRefresh() {
+      autoRefreshTimer = setInterval(() => {
+        if (pendingUpdates === 0) {
+          loadData();
+        }
+      }, 30000);
+    }
+    
+    startAutoRefresh();
     
     // Initial load
     loadData();
