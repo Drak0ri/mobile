@@ -345,19 +345,21 @@
       const data = [];
       const checkInsByStudent = {};
       
-      // Group check-ins by student ID
+      // Group check-ins by student ID (convert to string)
       logs.forEach(log => {
         if (log.action === 'IN') {
-          if (!checkInsByStudent[log.studentId]) {
-            checkInsByStudent[log.studentId] = new Set();
+          const studentId = String(log.studentId);
+          if (!checkInsByStudent[studentId]) {
+            checkInsByStudent[studentId] = new Set();
           }
-          checkInsByStudent[log.studentId].add(log.date.split('T')[0]); // Just the date part
+          checkInsByStudent[studentId].add(log.date.split('T')[0]); // Just the date part
         }
       });
       
       // Create report rows
       roster.forEach(student => {
-        const daysCheckedIn = checkInsByStudent[student.id]?.size || 0;
+        const studentId = String(student.id);
+        const daysCheckedIn = checkInsByStudent[studentId]?.size || 0;
         const currentStatus = student.status || 'OUT';
         
         data.push({
