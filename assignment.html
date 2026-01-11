@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>IESV Tag Assignment</title>
-  <link rel="icon" href="ies.ico">
+  <link rel="icon" href="ies. ico">
   <style>
     * {
       box-sizing: border-box;
@@ -14,7 +14,7 @@
     
     body {
       font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-      background: #1a1a2e;
+      background:  #1a1a2e;
       color: white;
       min-height: 100vh;
     }
@@ -39,28 +39,28 @@
       background: #16213e;
       padding: 25px;
       border-radius: 12px;
-      margin-bottom: 20px;
+      margin-bottom:  20px;
     }
     
     .section h2 {
       margin-bottom: 20px;
       font-size: 1.2rem;
       padding-bottom: 15px;
-      border-bottom: 1px solid #4a5568;
+      border-bottom:  1px solid #4a5568;
     }
     
     /* Search */
     .search-input {
       width: 100%;
       padding: 15px;
-      font-size: 1rem;
-      border: 2px solid #4a5568;
-      border-radius: 8px;
-      background: #1a1a2e;
+      font-size:  1rem;
+      border:  2px solid #4a5568;
+      border-radius:  8px;
+      background:  #1a1a2e;
       color: white;
     }
     
-    .search-input:focus {
+    .search-input: focus {
       outline: none;
       border-color: #6366f1;
     }
@@ -68,7 +68,7 @@
     .search-results {
       margin-top: 15px;
       max-height: 250px;
-      overflow-y: auto;
+      overflow-y:  auto;
     }
     
     .search-result {
@@ -87,7 +87,7 @@
       background: #4a5568;
     }
     
-    .search-result.selected {
+    .search-result. selected {
       background: #6366f1;
     }
     
@@ -123,7 +123,7 @@
     
     .student-name {
       font-size: 1.4rem;
-      font-weight: 600;
+      font-weight:  600;
     }
     
     .student-class {
@@ -148,7 +148,7 @@
       background: #1a1a2e;
       padding: 10px 15px;
       border-radius: 8px;
-      margin-right: 10px;
+      margin-right:  10px;
       margin-bottom: 10px;
     }
     
@@ -158,7 +158,7 @@
     }
     
     .tag-type {
-      font-size: 0.8rem;
+      font-size:  0.8rem;
       opacity: 0.6;
     }
     
@@ -168,14 +168,14 @@
       color: white;
       width: 24px;
       height: 24px;
-      border-radius: 50%;
+      border-radius:  50%;
       cursor: pointer;
       font-size: 1rem;
       line-height: 1;
     }
     
     .tag-remove:hover {
-      background: #dc2626;
+      background:  #dc2626;
     }
     
     .no-tags {
@@ -231,16 +231,16 @@
     .assign-btn {
       padding: 12px 25px;
       font-size: 1rem;
-      font-weight: 600;
+      font-weight:  600;
       border: none;
       border-radius: 8px;
       background: #10b981;
-      color: white;
+      color:  white;
       cursor: pointer;
     }
     
     .assign-btn:hover {
-      background: #059669;
+      background:  #059669;
     }
     
     .assign-btn:disabled {
@@ -267,11 +267,11 @@
       display: block;
     }
     
-    .feedback.success {
+    .feedback. success {
       background: #065f46;
     }
     
-    .feedback.error {
+    .feedback. error {
       background: #7f1d1d;
     }
     
@@ -282,7 +282,7 @@
     }
     
     .scan-active {
-      border-color: #10b981 !important;
+      border-color: #10b981 ! important;
       animation: pulse 1.5s infinite;
     }
     
@@ -294,8 +294,8 @@
 </head>
 <body>
   <div class="header">
-    <a href="index.html"><img src="ies-logo-removebg-preview.png" alt="IES Logo" style="height: 40px;"></a>
-    <h1>IESV Tag Assignment</h1>
+    <a href="index.html"><img src="ies-logo-removebg-preview.png" alt="IES Logo" style="height:  40px;"></a>
+    <h1>🏷️ IESV Tag Assignment</h1>
   </div>
   
   <div class="main">
@@ -363,7 +363,7 @@
         const response = await fetch(url);
         const result = await response.json();
         if (result.success) {
-          students = result.students;
+          students = result.data;  // ← FIXED: Changed from result.students to result.data
         }
       } catch (err) {
         console.error('Failed to load students:', err);
@@ -397,19 +397,19 @@
               <div class="result-name">${escapeHtml(s.name)}</div>
               <div class="result-class">${s.class}</div>
             </div>
-            <div class="result-tags">${tagCount} tag${tagCount !== 1 ? 's' : ''}</div>
+            <div class="result-tags">${tagCount} tag${tagCount !== 1 ?  's' : ''}</div>
           </div>
         `;
       }).join('');
       
       document.querySelectorAll('.search-result').forEach(el => {
-        el.addEventListener('click', () => selectStudent(el.dataset.id));
+        el.addEventListener('click', () => selectStudent(el.dataset. id));
       });
     });
     
     function countTags(student) {
       let count = 0;
-      if (student.primaryRfid) count++;
+      if (student.rfid) count++;  // ← FIXED: Changed from primaryRfid to rfid
       if (student.additionalRfids) {
         count += student.additionalRfids.split(',').filter(t => t.trim()).length;
       }
@@ -441,12 +441,12 @@
       
       let html = '';
       
-      if (selectedStudent.primaryRfid) {
+      if (selectedStudent.rfid) {  // ← FIXED: Changed from primaryRfid to rfid
         html += `
           <div class="tag-item">
-            <span class="tag-id">${escapeHtml(selectedStudent.primaryRfid)}</span>
+            <span class="tag-id">${escapeHtml(selectedStudent.rfid)}</span>
             <span class="tag-type">(Primary)</span>
-            <button class="tag-remove" data-tag="${escapeHtml(selectedStudent.primaryRfid)}">&times;</button>
+            <button class="tag-remove" data-tag="${escapeHtml(selectedStudent.rfid)}">&times;</button>
           </div>
         `;
       }
@@ -464,7 +464,7 @@
         });
       }
       
-      if (!html) {
+      if (! html) {
         html = '<span class="no-tags">No tags assigned</span>';
       }
       
@@ -485,14 +485,14 @@
     });
     
     // Visual feedback when input focused
-    tagInput.addEventListener('focus', () => tagInput.classList.add('scan-active'));
+    tagInput.addEventListener('focus', () => tagInput.classList. add('scan-active'));
     tagInput.addEventListener('blur', () => tagInput.classList.remove('scan-active'));
     
     // Assign button
     assignBtn.addEventListener('click', assignTag);
     
     async function assignTag() {
-      const tagId = tagInput.value.trim();
+      const tagId = tagInput.value. trim();
       if (!tagId || !selectedStudent) return;
       
       assignBtn.disabled = true;
@@ -500,7 +500,7 @@
       const isPrimary = tagType.value === 'primary';
       
       try {
-        const url = `${API_URL}?action=assignTag&studentId=${encodeURIComponent(selectedStudent.id)}&tagId=${encodeURIComponent(tagId)}&isPrimary=${isPrimary}`;
+        const url = `${API_URL}?action=assignTag&studentId=${encodeURIComponent(selectedStudent. id)}&tagId=${encodeURIComponent(tagId)}&isPrimary=${isPrimary}`;
         const response = await fetch(url);
         const result = await response.json();
         
@@ -509,9 +509,9 @@
           
           // Update local data
           if (isPrimary) {
-            selectedStudent.primaryRfid = tagId;
+            selectedStudent.rfid = tagId;  // ← FIXED: Changed from primaryRfid to rfid
           } else {
-            const existing = selectedStudent.additionalRfids ? selectedStudent.additionalRfids.split(',').filter(t => t.trim()) : [];
+            const existing = selectedStudent.additionalRfids ?  selectedStudent.additionalRfids.split(',').filter(t => t.trim()) : [];
             existing.push(tagId);
             selectedStudent.additionalRfids = existing.join(',');
           }
@@ -523,7 +523,7 @@
           showFeedback(result.error, 'error');
         }
       } catch (err) {
-        showFeedback(`Failed: ${err.message}`, 'error');
+        showFeedback(`Failed:  ${err.message}`, 'error');
       }
       
       assignBtn.disabled = false;
@@ -531,10 +531,10 @@
     
     async function removeTag(tagId) {
       if (!selectedStudent) return;
-      if (!confirm(`Remove tag ${tagId}?`)) return;
+      if (! confirm(`Remove tag ${tagId}?`)) return;
       
       try {
-        const url = `${API_URL}?action=unassignTag&studentId=${encodeURIComponent(selectedStudent.id)}&tagId=${encodeURIComponent(tagId)}`;
+        const url = `${API_URL}?action=unassignTag&studentId=${encodeURIComponent(selectedStudent. id)}&tagId=${encodeURIComponent(tagId)}`;
         const response = await fetch(url);
         const result = await response.json();
         
@@ -542,10 +542,10 @@
           showFeedback('Tag removed', 'success');
           
           // Update local data
-          if (selectedStudent.primaryRfid === tagId) {
-            selectedStudent.primaryRfid = '';
+          if (selectedStudent.rfid === tagId) {  // ← FIXED: Changed from primaryRfid to rfid
+            selectedStudent.rfid = '';
           } else {
-            const additional = selectedStudent.additionalRfids.split(',').filter(t => t.trim() && t.trim() !== tagId);
+            const additional = selectedStudent.additionalRfids.split(',').filter(t => t.trim() && t. trim() !== tagId);
             selectedStudent.additionalRfids = additional.join(',');
           }
           
