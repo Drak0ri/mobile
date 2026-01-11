@@ -113,7 +113,7 @@
     
     .summary-cards {
       display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
       gap: 20px;
       margin-bottom: 25px;
     }
@@ -139,6 +139,8 @@
     .summary-card.checked-in .number { color: #10b981; }
     .summary-card.not-checked-in .number { color: #ef4444; }
     .summary-card.rate .number { color: #667eea; }
+    .summary-card.current-in .number { color: #10b981; }
+    .summary-card.current-out .number { color: #ef4444; }
     
     .report-table {
       background: #16213e;
@@ -356,12 +358,14 @@
       // Create report rows
       roster.forEach(student => {
         const daysCheckedIn = checkInsByStudent[student.rfid]?.size || 0;
+        const currentStatus = student.status || 'OUT';
         
         data.push({
           name: student.name,
           class: student.class,
           daysCheckedIn: daysCheckedIn,
-          status: daysCheckedIn > 0 ? 'Checked In' : 'Not Checked In'
+          currentStatus: currentStatus,
+          weeklyStatus: daysCheckedIn > 0 ? 'Checked In This Week' : 'Not Checked In This Week'
         });
       });
       
@@ -376,24 +380,34 @@
 
     // Display summary cards
     function displaySummary(data) {
-      const checkedIn = data.filter(s => s.daysCheckedIn > 0).length;
-      const notCheckedIn = data.filter(s => s.daysCheckedIn === 0).length;
-      const rate = data.length > 0 ? ((checkedIn / data.length) * 100).toFixed(1) : 0;
+      const weeklyCheckedIn = data.filter(s => s.daysCheckedIn > 0).length;
+      const weeklyNotCheckedIn = data.filter(s => s.daysCheckedIn === 0).length;
+      const currentIn = data.filter(s => s.currentStatus === 'IN').length;
+      const currentOut = data.filter(s => s.currentStatus === 'OUT').length;
+      const rate = data.length > 0 ? ((weeklyCheckedIn / data.length) * 100).toFixed(1) : 0;
       
       const summarySection = document.getElementById('summarySection');
       summarySection.innerHTML = `
         <div class="summary-cards">
+          <div class="summary-card current-in">
+            <div class="number">${currentIn}</div>
+            <div class="label">Currently Checked IN</div>
+          </div>
+          <div class="summary-card current-out">
+            <div class="number">${currentOut}</div>
+            <div class="label">Currently Checked OUT</div>
+          </div>
           <div class="summary-card checked-in">
-            <div class="number">${checkedIn}</div>
-            <div class="label">Students Checked In</div>
+            <div class="number">${weeklyCheckedIn}</div>
+            <div class="label">Checked In This Week</div>
           </div>
           <div class="summary-card not-checked-in">
-            <div class="number">${notCheckedIn}</div>
-            <div class="label">Students Not Checked In</div>
+            <div class="number">${weeklyNotCheckedIn}</div>
+            <div class="label">Not Checked In This Week</div>
           </div>
           <div class="summary-card rate">
             <div class="number">${rate}%</div>
-            <div class="label">Check-In Rate</div>
+            <div class="label">Weekly Participation Rate</div>
           </div>
         </div>
       `;
@@ -420,8 +434,13 @@
           <td>${student.class}</td>
           <td>${student.daysCheckedIn} / 5 days</td>
           <td>
+            <span class="status-badge ${student.currentStatus === 'IN' ? 'checked-in' : 'not-checked-in'}">
+              ${student.currentStatus}
+            </span>
+          </td>
+          <td>
             <span class="status-badge ${student.daysCheckedIn > 0 ? 'checked-in' : 'not-checked-in'}">
-              ${student.status}
+              ${student.weeklyStatus}
             </span>
           </td>
         </tr>
@@ -435,7 +454,8 @@
                 <th>Student Name</th>
                 <th>Class</th>
                 <th>Days Checked In</th>
-                <th>Status</th>
+                <th>Current Status</th>
+                <th>Weekly Summary</th>
               </tr>
             </thead>
             <tbody>
@@ -456,9 +476,9 @@
       const select = document.getElementById('weekSelect');
       const weekText = select.options[select.selectedIndex].text;
       
-      let csv = 'Student Name,Class,Days Checked In,Status\n';
+      let csv = 'Student Name,Class,Days Checked In,Current Status,Weekly Summary\n';
       currentData.forEach(student => {
-        csv += `"${student.name}","${student.class}","${student.daysCheckedIn} / 5","${student.status}"\n`;
+        csv += `"${student.name}","${student.class}","${student.daysCheckedIn} / 5","${student.currentStatus}","${student.weeklyStatus}"\n`;
       });
       
       const blob = new Blob([csv], { type: 'text/csv' });
