@@ -1,10 +1,10 @@
-<! DOCTYPE html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Weekly Report - IESV Phone Check-In</title>
-  <link rel="icon" href="ies. ico">
+  <link rel="icon" href="ies.ico">
   <style>
     * {
       margin: 0;
@@ -46,7 +46,7 @@
     .controls {
       background: #16213e;
       padding: 25px;
-      border-radius:  12px;
+      border-radius: 12px;
       margin-bottom: 25px;
       display: flex;
       align-items: center;
@@ -101,8 +101,8 @@
       transform: translateY(-1px);
     }
     
-    . btn-export {
-      background:  #10b981;
+    .btn-export {
+      background: #10b981;
       color: white;
     }
     
@@ -114,22 +114,22 @@
     .summary-cards {
       display: flex;
       gap: 15px;
-      margin-bottom:  25px;
+      margin-bottom: 25px;
       flex-wrap: nowrap;
     }
     
     .summary-card {
       background: #1a2332;
       padding: 25px 20px;
-      border-radius:  12px;
+      border-radius: 12px;
       text-align: center;
       flex: 1;
       min-width: 0;
     }
     
-    .summary-card . number {
-      font-size:  2.8rem;
-      font-weight:  bold;
+    .summary-card .number {
+      font-size: 2.8rem;
+      font-weight: bold;
       margin-bottom: 8px;
     }
     
@@ -141,7 +141,7 @@
     
     .summary-card.checked-in .number { color: #10b981; }
     .summary-card.not-checked-in .number { color: #ef4444; }
-    .summary-card.rate . number { color: #667eea; }
+    .summary-card.rate .number { color: #667eea; }
     .summary-card.current-in .number { color: #10b981; }
     .summary-card.current-out .number { color: #ef4444; }
     
@@ -152,7 +152,7 @@
     }
     
     table {
-      width:  100%;
+      width: 100%;
       border-collapse: collapse;
     }
     
@@ -191,12 +191,12 @@
       font-weight: 600;
     }
     
-    .status-badge. checked-in {
-      background:  rgba(16, 185, 129, 0.2);
+    .status-badge.checked-in {
+      background: rgba(16, 185, 129, 0.2);
       color: #10b981;
     }
     
-    . status-badge.not-checked-in {
+    .status-badge.not-checked-in {
       background: rgba(239, 68, 68, 0.2);
       color: #ef4444;
     }
@@ -224,8 +224,8 @@
     }
     
     .empty-state-icon {
-      font-size:  4rem;
-      margin-bottom:  15px;
+      font-size: 4rem;
+      margin-bottom: 15px;
     }
   </style>
 </head>
@@ -311,7 +311,7 @@
       const week = parseInt(weekStr);
       
       const summarySection = document.getElementById('summarySection');
-      const reportSection = document. getElementById('reportSection');
+      const reportSection = document.getElementById('reportSection');
       
       reportSection.innerHTML = '<div class="loading">⏳ Loading report...</div>';
       summarySection.innerHTML = '';
@@ -354,7 +354,7 @@
       
       // Group check-ins by student ID (convert to string)
       logs.forEach(log => {
-        if (log. action === 'IN') {
+        if (log.action === 'IN') {
           const studentId = String(log.studentId);
           if (!checkInsByStudent[studentId]) {
             checkInsByStudent[studentId] = new Set();
@@ -365,14 +365,14 @@
       
       // Create report rows
       roster.forEach(student => {
-        const studentId = String(student. id);
+        const studentId = String(student.id);
         const daysCheckedIn = checkInsByStudent[studentId]?.size || 0;
         const currentStatus = student.status || 'OUT';
         
         data.push({
           name: student.name,
           class: student.class,
-          daysCheckedIn:  daysCheckedIn,
+          daysCheckedIn: daysCheckedIn,
           currentStatus: currentStatus,
           weeklyStatus: daysCheckedIn > 0 ? 'Checked In This Week' : 'Not Checked In This Week'
         });
@@ -389,7 +389,7 @@
 
     // Display summary cards
     function displaySummary(data) {
-      const weeklyCheckedIn = data.filter(s => s. daysCheckedIn > 0).length;
+      const weeklyCheckedIn = data.filter(s => s.daysCheckedIn > 0).length;
       const weeklyNotCheckedIn = data.filter(s => s.daysCheckedIn === 0).length;
       const currentIn = data.filter(s => s.currentStatus === 'IN').length;
       const currentOut = data.filter(s => s.currentStatus === 'OUT').length;
@@ -448,14 +448,14 @@
             </span>
           </td>
           <td>
-            <span class="status-badge ${student. daysCheckedIn > 0 ? 'checked-in' :  'not-checked-in'}">
+            <span class="status-badge ${student.daysCheckedIn > 0 ? 'checked-in' : 'not-checked-in'}">
               ${student.weeklyStatus}
             </span>
           </td>
         </tr>
       `).join('');
       
-      reportSection. innerHTML = `
+      reportSection.innerHTML = `
         <div class="report-table">
           <table>
             <thead>
@@ -478,7 +478,7 @@
     // Export to CSV
     function exportToCSV() {
       if (currentData.length === 0) {
-        alert('No data to export.  Please load a report first.');
+        alert('No data to export. Please load a report first.');
         return;
       }
       
@@ -487,14 +487,14 @@
       
       let csv = 'Student Name,Class,Days Checked In,Current Status,Weekly Summary\n';
       currentData.forEach(student => {
-        csv += `"${student.name}","${student.class}","${student. daysCheckedIn} / 7","${student.currentStatus}","${student.weeklyStatus}"\n`;
+        csv += `"${student.name}","${student.class}","${student.daysCheckedIn} / 7","${student.currentStatus}","${student.weeklyStatus}"\n`;
       });
       
       const blob = new Blob([csv], { type: 'text/csv' });
       const url = window.URL.createObjectURL(blob);
-      const a = document. createElement('a');
+      const a = document.createElement('a');
       a.href = url;
-      a. download = `phone-checkin-week-${weekText. replace('Week ', '')}.csv`;
+      a.download = `phone-checkin-week-${weekText.replace('Week ', '')}.csv`;
       a.click();
       window.URL.revokeObjectURL(url);
     }
