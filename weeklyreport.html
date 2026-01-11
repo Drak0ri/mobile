@@ -345,6 +345,9 @@
       const data = [];
       const checkInsByStudent = {};
       
+      console.log('Total logs received:', logs.length);
+      console.log('Sample log:', logs[0]);
+      
       // Group check-ins by student ID (convert to string)
       logs.forEach(log => {
         if (log.action === 'IN') {
@@ -356,11 +359,18 @@
         }
       });
       
+      console.log('Check-ins by student:', checkInsByStudent);
+      console.log('Sample roster entry:', roster[0]);
+      
       // Create report rows
       roster.forEach(student => {
         const studentId = String(student.id);
         const daysCheckedIn = checkInsByStudent[studentId]?.size || 0;
         const currentStatus = student.status || 'OUT';
+        
+        if (daysCheckedIn > 0) {
+          console.log(`Student ${studentId} (${student.name}): ${daysCheckedIn} days`);
+        }
         
         data.push({
           name: student.name,
