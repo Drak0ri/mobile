@@ -13,8 +13,8 @@
     }
     
     body {
-      font-family:  'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-      background:  linear-gradient(135deg, #0f0c29, #302b63, #24243e);
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background: linear-gradient(135deg, #0f0c29, #302b63, #24243e);
       color: white;
       min-height: 100vh;
       display: flex;
@@ -101,8 +101,8 @@
       transform: translateY(-1px);
     }
     
-    .btn-export {
-      background: #10b981;
+    . btn-export {
+      background:  #10b981;
       color: white;
     }
     
@@ -112,34 +112,37 @@
     }
     
     .summary-cards {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
-      gap: 20px;
-      margin-bottom: 25px;
+      display: flex;
+      gap: 15px;
+      margin-bottom:  25px;
+      flex-wrap: nowrap;
     }
     
     .summary-card {
-      background: #16213e;
-      padding: 20px;
-      border-radius: 12px;
+      background: #1a2332;
+      padding: 25px 20px;
+      border-radius:  12px;
       text-align: center;
+      flex: 1;
+      min-width: 0;
     }
     
     .summary-card . number {
-      font-size:  2.5rem;
-      font-weight: bold;
-      margin-bottom: 5px;
+      font-size:  2.8rem;
+      font-weight:  bold;
+      margin-bottom: 8px;
     }
     
     .summary-card .label {
-      font-size: 0.95rem;
-      color: #a0aec0;
+      font-size: 0.9rem;
+      color: #9ca3af;
+      line-height: 1.3;
     }
     
-    .summary-card.checked-in . number { color: #10b981; }
+    .summary-card.checked-in .number { color: #10b981; }
     .summary-card.not-checked-in .number { color: #ef4444; }
-    .summary-card.rate .number { color: #667eea; }
-    . summary-card.current-in . number { color: #10b981; }
+    .summary-card.rate . number { color: #667eea; }
+    .summary-card.current-in .number { color: #10b981; }
     .summary-card.current-out .number { color: #ef4444; }
     
     .report-table {
@@ -149,7 +152,7 @@
     }
     
     table {
-      width: 100%;
+      width:  100%;
       border-collapse: collapse;
     }
     
@@ -159,8 +162,8 @@
     
     th {
       padding: 18px 20px;
-      text-align:  left;
-      font-weight:  600;
+      text-align: left;
+      font-weight: 600;
       font-size: 0.95rem;
       text-transform: uppercase;
       letter-spacing: 0.5px;
@@ -176,7 +179,7 @@
       transition: background 0.2s;
     }
     
-    tbody tr: hover {
+    tbody tr:hover {
       background: #1e2a4a;
     }
     
@@ -188,17 +191,17 @@
       font-weight: 600;
     }
     
-    .status-badge.checked-in {
-      background: rgba(16, 185, 129, 0.2);
+    .status-badge. checked-in {
+      background:  rgba(16, 185, 129, 0.2);
       color: #10b981;
     }
     
-    .status-badge.not-checked-in {
-      background:  rgba(239, 68, 68, 0.2);
+    . status-badge.not-checked-in {
+      background: rgba(239, 68, 68, 0.2);
       color: #ef4444;
     }
     
-    . loading {
+    .loading {
       text-align: center;
       padding: 60px;
       font-size: 1.2rem;
@@ -220,8 +223,8 @@
       color: #a0aec0;
     }
     
-    . empty-state-icon {
-      font-size: 4rem;
+    .empty-state-icon {
+      font-size:  4rem;
       margin-bottom:  15px;
     }
   </style>
@@ -284,7 +287,7 @@
       }
     }
 
-    // Get Monday of ISO week - CORRECTED!
+    // Get Monday of ISO week - CORRECTED
     function getMondayOfWeek(year, week) {
       // Create a date for January 4th (always in week 1)
       const jan4 = new Date(Date.UTC(year, 0, 4));
@@ -304,11 +307,11 @@
     // Load report for selected week
     async function loadReport() {
       const select = document.getElementById('weekSelect');
-      const [year, weekStr] = select. value.split('-W');
+      const [year, weekStr] = select.value.split('-W');
       const week = parseInt(weekStr);
       
       const summarySection = document.getElementById('summarySection');
-      const reportSection = document.getElementById('reportSection');
+      const reportSection = document. getElementById('reportSection');
       
       reportSection.innerHTML = '<div class="loading">⏳ Loading report...</div>';
       summarySection.innerHTML = '';
@@ -318,7 +321,6 @@
         const monday = getMondayOfWeek(parseInt(year), week);
         const sunday = new Date(monday);
         sunday.setDate(sunday.getDate() + 6);
-        console.log('Requesting logs from:', monday. toISOString().split('T')[0], 'to', sunday.toISOString().split('T')[0]);
         
         // Fetch roster and scan logs
         const [rosterRes, logsRes] = await Promise.all([
@@ -328,10 +330,6 @@
         
         const roster = await rosterRes.json();
         const logs = await logsRes.json();
-        
-        console.log('Raw logs response:', logs);
-        console.log('logs.data:', logs.data);
-        console.log('logs.data type:', typeof logs.data, 'isArray:', Array.isArray(logs.data));
         
         if (!roster.success || !logs.success) {
           throw new Error('Failed to load data');
@@ -354,12 +352,9 @@
       const data = [];
       const checkInsByStudent = {};
       
-      console. log('Total logs received:', logs.length);
-      console.log('Sample log:', logs[0]);
-      
       // Group check-ins by student ID (convert to string)
       logs.forEach(log => {
-        if (log.action === 'IN') {
+        if (log. action === 'IN') {
           const studentId = String(log.studentId);
           if (!checkInsByStudent[studentId]) {
             checkInsByStudent[studentId] = new Set();
@@ -368,27 +363,18 @@
         }
       });
       
-      console.log('Check-ins by student:', checkInsByStudent);
-      console.log('Sample roster entry:', roster[0]);
-      console.log('Total students in roster:', roster.length);
-      console.log('Students with check-ins:', Object.keys(checkInsByStudent).length);
-      
       // Create report rows
       roster.forEach(student => {
-        const studentId = String(student.id);
+        const studentId = String(student. id);
         const daysCheckedIn = checkInsByStudent[studentId]?.size || 0;
         const currentStatus = student.status || 'OUT';
-        
-        if (daysCheckedIn > 0) {
-          console.log(`Student ${studentId} (${student.name}): ${daysCheckedIn} days`);
-        }
         
         data.push({
           name: student.name,
           class: student.class,
-          daysCheckedIn: daysCheckedIn,
+          daysCheckedIn:  daysCheckedIn,
           currentStatus: currentStatus,
-          weeklyStatus:  daysCheckedIn > 0 ? 'Checked In This Week' : 'Not Checked In This Week'
+          weeklyStatus: daysCheckedIn > 0 ? 'Checked In This Week' : 'Not Checked In This Week'
         });
       });
       
@@ -403,7 +389,7 @@
 
     // Display summary cards
     function displaySummary(data) {
-      const weeklyCheckedIn = data.filter(s => s.daysCheckedIn > 0).length;
+      const weeklyCheckedIn = data.filter(s => s. daysCheckedIn > 0).length;
       const weeklyNotCheckedIn = data.filter(s => s.daysCheckedIn === 0).length;
       const currentIn = data.filter(s => s.currentStatus === 'IN').length;
       const currentOut = data.filter(s => s.currentStatus === 'OUT').length;
