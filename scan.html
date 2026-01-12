@@ -29,7 +29,7 @@
     
     .header h1 {
       font-size: 1.5rem;
-      font-weight: 500;
+      font-weight:  500;
     }
     
     .station-row {
@@ -114,7 +114,7 @@
     
     . student-name {
       font-size: 4rem;
-      font-weight: 700;
+      font-weight:  700;
       margin-bottom: 20px;
       word-break: break-word;
     }
@@ -127,7 +127,7 @@
     
     .status-label {
       font-size: 3rem;
-      font-weight:  600;
+      font-weight: 600;
       text-transform: uppercase;
       letter-spacing: 0.1em;
     }
@@ -151,7 +151,7 @@
     .offline-banner {
       display: none;
       background: #f59e0b;
-      color: #000;
+      color:  #000;
       padding: 10px;
       text-align: center;
       font-weight: 600;
@@ -192,15 +192,15 @@
       border: none;
       border-radius: 8px;
       background: #4a5568;
-      color: white;
+      color:  white;
       cursor: pointer;
     }
     
-    .test-toggle:hover {
-      background:  #6366f1;
+    . test-toggle:hover {
+      background: #6366f1;
     }
     
-    .test-toggle. active {
+    . test-toggle. active {
       background: #f59e0b;
       color: black;
     }
@@ -210,15 +210,15 @@
       gap: 10px;
     }
     
-    .test-input-row. hidden {
+    . test-input-row. hidden {
       display: none;
     }
     
-    . test-input {
+    .test-input {
       padding: 10px 15px;
       font-size: 1rem;
       font-family: monospace;
-      border:  2px solid #4a5568;
+      border: 2px solid #4a5568;
       border-radius: 8px;
       background: #16213e;
       color: white;
@@ -242,7 +242,7 @@
     }
     
     .test-btn:hover {
-      background:  #d97706;
+      background: #d97706;
     }
 
     /* Station selector modal */
@@ -256,12 +256,12 @@
       z-index: 100;
     }
     
-    .modal.hidden {
+    .modal. hidden {
       display: none;
     }
     
-    .modal-content {
-      background: #16213e;
+    . modal-content {
+      background:  #16213e;
       padding: 40px;
       border-radius: 20px;
       text-align: center;
@@ -275,14 +275,14 @@
     
     .station-buttons {
       display: grid;
-      grid-template-columns:  repeat(3, 1fr);
+      grid-template-columns: repeat(3, 1fr);
       gap: 15px;
     }
     
-    . station-btn {
-      padding:  20px;
+    .station-btn {
+      padding: 20px;
       font-size:  1.5rem;
-      font-weight:  600;
+      font-weight: 600;
       border: none;
       border-radius: 10px;
       background: #4a5568;
@@ -324,7 +324,7 @@
     <a href="index.html"><img src="ies-logo-removebg-preview.png" alt="IES Logo" style="height: 40px;"></a>
     <h1>IESV Phone Check-In</h1>
     <div class="station-row">
-      <div class="station-info" id="stationInfo">Station:  --</div>
+      <div class="station-info" id="stationInfo">Station: --</div>
       <button class="change-btn" id="changeBtn">Change</button>
     </div>
   </div>
@@ -369,9 +369,9 @@
     const studentName = document.getElementById('studentName');
     const studentClass = document.getElementById('studentClass');
     const statusLabel = document.getElementById('statusLabel');
-    const errorMessage = document. getElementById('errorMessage');
+    const errorMessage = document.getElementById('errorMessage');
     const readyMessage = document.getElementById('readyMessage');
-    const stationInfo = document. getElementById('stationInfo');
+    const stationInfo = document.getElementById('stationInfo');
     const stationModal = document.getElementById('stationModal');
     const offlineBanner = document.getElementById('offlineBanner');
     const queueCount = document.getElementById('queueCount');
@@ -379,7 +379,7 @@
     // Initialize
     function init() {
       if (station) {
-        stationModal. classList.add('hidden');
+        stationModal.classList.add('hidden');
         stationInfo.textContent = `Station: ${station}`;
       }
       
@@ -393,7 +393,7 @@
       // Handle RFID input (reader sends data + Enter)
       rfidInput.addEventListener('keypress', (e) => {
         if (e.key === 'Enter') {
-          const tagId = rfidInput. value.trim();
+          const tagId = rfidInput.value.trim();
           rfidInput.value = '';
           if (tagId) {
             handleScan(tagId);
@@ -434,8 +434,8 @@
         offlineBanner.classList.add('show');
       });
       
-      if (!navigator.onLine) {
-        offlineBanner.classList. add('show');
+      if (! navigator.onLine) {
+        offlineBanner.classList.add('show');
       }
       
       // Test mode
@@ -462,7 +462,7 @@
       
       testTagInput.addEventListener('keypress', (e) => {
         if (e.key === 'Enter') {
-          const tagId = testTagInput.value. trim();
+          const tagId = testTagInput.value.trim();
           if (tagId) {
             handleScan(tagId);
             testTagInput.value = '';
@@ -471,7 +471,7 @@
       });
     }
     
-    // ⚡ OPTIMIZED: Removed duplicate lookup call - cut scan time in half! 
+    // ⚡ OPTIMIZED: Removed duplicate lookup call - cut scan time in half!
     async function handleScan(tagId) {
       // Clear any pending reset
       if (clearTimer) {
@@ -480,11 +480,11 @@
       }
       
       // Show processing state
-      showStatus('processing', 'Processing...', '', '');
+      showStatus('processing', 'Processing... ', '', '');
       
       if (navigator.onLine) {
         try {
-          // OPTIMIZED: Single API call instead of two (lookup + scan)
+          // OPTIMIZED:  Single API call instead of two (lookup + scan)
           const result = await doScan(tagId);
           
           // Handle class mismatch error
@@ -531,8 +531,8 @@
         );
       } else if (result.error === 'STALE') {
         isUnrecognizedTag = false;
-        showStatus('error', result.student.name, result. student.class, '');
-        errorMessage.textContent = result. message;
+        showStatus('error', result. student.name, result.student. class, '');
+        errorMessage.textContent = result.message;
       } else if (result.error === 'Tag not found') {
         isUnrecognizedTag = true;
         showStatus('error', 'Unknown Tag', '', 'Tag not registered');
@@ -560,10 +560,10 @@
           statusBox. classList.add('status-in');
           break;
         case 'out':
-          statusBox.classList.add('status-out');
+          statusBox. classList.add('status-out');
           break;
         case 'error':
-          statusBox.classList.add('status-error');
+          statusBox. classList.add('status-error');
           errorMessage.style.display = 'block';
           break;
         default:
@@ -574,10 +574,10 @@
     function resetDisplay() {
       isUnrecognizedTag = false;
       statusBox.className = 'status-box status-ready';
-      readyMessage.style.display = 'block';
-      studentName.style. display = 'none';
+      readyMessage. style.display = 'block';
+      studentName.style.display = 'none';
       studentClass.style.display = 'none';
-      statusLabel. style.display = 'none';
+      statusLabel.style.display = 'none';
       errorMessage.style.display = 'none';
       studentName.textContent = '';
       studentClass.textContent = '';
@@ -601,7 +601,7 @@
     }
     
     async function processQueue() {
-      if (isProcessing || scanQueue. length === 0 || ! navigator.onLine) return;
+      if (isProcessing || scanQueue.length === 0 || ! navigator.onLine) return;
       
       isProcessing = true;
       
