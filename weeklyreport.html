@@ -227,31 +227,150 @@
       font-size: 4rem;
       margin-bottom: 15px;
     }
+
+    /* Login screen */
+    .login-screen {
+      position: fixed;
+      inset: 0;
+      background: linear-gradient(135deg, #0f0c29, #302b63, #24243e);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 1000;
+    }
+    
+    .login-screen.hidden {
+      display: none;
+    }
+    
+    .login-box {
+      background: #16213e;
+      padding: 40px;
+      border-radius: 16px;
+      text-align: center;
+      width: 90%;
+      max-width: 400px;
+    }
+    
+    .login-box h2 {
+      margin-bottom: 30px;
+    }
+    
+    .login-input {
+      width: 100%;
+      padding: 15px;
+      font-size: 1.1rem;
+      border: 2px solid #4a5568;
+      border-radius: 8px;
+      background: #1a1a2e;
+      color: white;
+      text-align: center;
+      margin-bottom: 20px;
+    }
+    
+    .login-input:focus {
+      outline: none;
+      border-color: #667eea;
+    }
+    
+    .login-btn {
+      width: 100%;
+      padding: 15px;
+      font-size: 1.1rem;
+      font-weight: 600;
+      border: none;
+      border-radius: 8px;
+      background: #667eea;
+      color: white;
+      cursor: pointer;
+    }
+    
+    .login-btn:hover {
+      background: #5568d3;
+    }
+    
+    .login-error {
+      color: #ef4444;
+      margin-top: 15px;
+      display: none;
+    }
+    
+    .login-error.show {
+      display: block;
+    }
+    
+    .content {
+      display: none;
+      flex-direction: column;
+      min-height: 100vh;
+    }
+    
+    .content.show {
+      display: flex;
+    }
   </style>
 </head>
 <body>
-  <div class="header">
-    <a href="index.html"><img src="ies-logo-removebg-preview.png" alt="IES Logo" style="height: 40px;"></a>
-    <h1>📊 Weekly Phone Check-In Report</h1>
+  <!-- Login screen -->
+  <div class="login-screen" id="loginScreen">
+    <div class="login-box">
+      <h2>Enter Password</h2>
+      <input type="password" class="login-input" id="passwordInput" placeholder="Password">
+      <button class="login-btn" id="loginBtn">Unlock</button>
+      <div class="login-error" id="loginError">Incorrect password</div>
+    </div>
   </div>
 
-  <div class="container">
-    <div class="controls">
-      <div class="control-group">
-        <label for="weekSelect">Select Week:</label>
-        <select id="weekSelect"></select>
-      </div>
-      <button class="btn btn-primary" onclick="loadReport()">Load Report</button>
-      <button class="btn btn-export" onclick="exportToCSV()">Export CSV</button>
+  <!-- Main content -->
+  <div class="content" id="content">
+    <div class="header">
+      <a href="index.html"><img src="ies-logo-removebg-preview.png" alt="IES Logo" style="height: 40px;"></a>
+      <h1>📊 Weekly Phone Check-In Report</h1>
     </div>
 
-    <div id="summarySection"></div>
-    <div id="reportSection"></div>
+    <div class="container">
+      <div class="controls">
+        <div class="control-group">
+          <label for="weekSelect">Select Week:</label>
+          <select id="weekSelect"></select>
+        </div>
+        <button class="btn btn-primary" onclick="loadReport()">Load Report</button>
+        <button class="btn btn-export" onclick="exportToCSV()">Export CSV</button>
+      </div>
+
+      <div id="summarySection"></div>
+      <div id="reportSection"></div>
+    </div>
   </div>
 
   <script>
+    const PASSWORD = 'Winter2026';
     const API_URL = 'https://script.google.com/macros/s/AKfycbyGqqS1q6hvJEKpXRFLbqG01Pa_6uVVNCw6GHiUiFVc-5F2cMzd1ZRZqn-ZUL3Qq5hpGA/exec';
     let currentData = [];
+
+    const loginScreen = document.getElementById('loginScreen');
+    const content = document.getElementById('content');
+    const passwordInput = document.getElementById('passwordInput');
+    const loginBtn = document.getElementById('loginBtn');
+    const loginError = document.getElementById('loginError');
+
+    // Login
+    loginBtn.addEventListener('click', tryLogin);
+    passwordInput.addEventListener('keypress', (e) => {
+      if (e.key === 'Enter') tryLogin();
+    });
+    
+    function tryLogin() {
+      if (passwordInput.value === PASSWORD) {
+        loginScreen.classList.add('hidden');
+        content.classList.add('show');
+        populateWeekSelector();
+        loadReport();
+      } else {
+        loginError.classList.add('show');
+        passwordInput.value = '';
+      }
+    }
 
     // Get ISO week number for a date
     function getISOWeek(date) {
@@ -287,20 +406,14 @@
       }
     }
 
-    // Get Monday of ISO week - CORRECTED
+    // Get Monday of ISO week
     function getMondayOfWeek(year, week) {
-      // Create a date for January 4th (always in week 1)
       const jan4 = new Date(Date.UTC(year, 0, 4));
-      
-      // Calculate the Monday of week 1
-      const dayOfWeek = jan4.getUTCDay() || 7; // Sunday = 7
+      const dayOfWeek = jan4.getUTCDay() || 7;
       const week1Monday = new Date(jan4);
       week1Monday.setUTCDate(jan4.getUTCDate() - dayOfWeek + 1);
-      
-      // Add the appropriate number of weeks
       const targetMonday = new Date(week1Monday);
       targetMonday.setUTCDate(week1Monday.getUTCDate() + (week - 1) * 7);
-      
       return targetMonday;
     }
 
@@ -317,12 +430,10 @@
       summarySection.innerHTML = '';
       
       try {
-        // Get Monday and Sunday of the week
         const monday = getMondayOfWeek(parseInt(year), week);
         const sunday = new Date(monday);
         sunday.setDate(sunday.getDate() + 6);
         
-        // Fetch roster and scan logs
         const [rosterRes, logsRes] = await Promise.all([
           fetch(`${API_URL}?action=getRoster`),
           fetch(`${API_URL}?action=getWeeklyLogs&startDate=${monday.toISOString().split('T')[0]}&endDate=${sunday.toISOString().split('T')[0]}`)
@@ -335,10 +446,7 @@
           throw new Error('Failed to load data');
         }
         
-        // Process data
         currentData = processWeeklyData(roster.data, logs.data);
-        
-        // Display summary and table
         displaySummary(currentData);
         displayTable(currentData);
         
@@ -352,7 +460,6 @@
       const data = [];
       const checkInsByStudent = {};
       
-      // Group check-ins by student ID (convert to string)
       logs.forEach(log => {
         if (log.action === 'IN') {
           const studentId = String(log.studentId);
@@ -363,7 +470,6 @@
         }
       });
       
-      // Create report rows
       roster.forEach(student => {
         const studentId = String(student.id);
         const daysCheckedIn = checkInsByStudent[studentId]?.size || 0;
@@ -378,7 +484,6 @@
         });
       });
       
-      // Sort by class then name
       data.sort((a, b) => {
         if (a.class !== b.class) return a.class.localeCompare(b.class);
         return a.name.localeCompare(b.name);
@@ -498,10 +603,6 @@
       a.click();
       window.URL.revokeObjectURL(url);
     }
-
-    // Initialize
-    populateWeekSelector();
-    loadReport();
   </script>
 </body>
 </html>
