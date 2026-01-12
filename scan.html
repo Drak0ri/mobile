@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>IESV Phone Check-In</title>
-  <link rel="icon" href="ies.ico">
+  <link rel="icon" href="ies. ico">
   <style>
     * {
       box-sizing: border-box;
@@ -21,7 +21,7 @@
       color: white;
     }
     
-    . header {
+    .header {
       padding: 20px;
       text-align: center;
       background: #16213e;
@@ -88,8 +88,8 @@
       border: 3px solid #10b981;
     }
     
-    . status-out {
-      background:  #7f1d1d;
+    .status-out {
+      background: #7f1d1d;
       border: 3px solid #ef4444;
     }
     
@@ -120,7 +120,7 @@
     }
     
     .student-class {
-      font-size:  1.5rem;
+      font-size: 1.5rem;
       opacity: 0.8;
       margin-bottom: 30px;
     }
@@ -138,7 +138,7 @@
     }
     
     .error-message {
-      font-size: 1.5rem;
+      font-size:  1.5rem;
       margin-top: 20px;
       line-height: 1.4;
     }
@@ -192,15 +192,15 @@
       border: none;
       border-radius: 8px;
       background: #4a5568;
-      color:  white;
+      color: white;
       cursor: pointer;
     }
     
-    . test-toggle:hover {
-      background: #6366f1;
+    .test-toggle:hover {
+      background:  #6366f1;
     }
     
-    . test-toggle. active {
+    .test-toggle. active {
       background: #f59e0b;
       color: black;
     }
@@ -210,17 +210,17 @@
       gap: 10px;
     }
     
-    . test-input-row. hidden {
+    .test-input-row. hidden {
       display: none;
     }
     
-    . test-input {
+    .test-input {
       padding: 10px 15px;
-      font-size: 1rem;
+      font-size:  1rem;
       font-family: monospace;
       border:  2px solid #4a5568;
-      border-radius:  8px;
-      background:  #16213e;
+      border-radius: 8px;
+      background: #16213e;
       color: white;
       width: 180px;
     }
@@ -242,7 +242,7 @@
     }
     
     .test-btn:hover {
-      background: #d97706;
+      background:  #d97706;
     }
 
     /* Station selector modal */
@@ -263,7 +263,7 @@
     . modal-content {
       background:  #16213e;
       padding: 40px;
-      border-radius:  20px;
+      border-radius: 20px;
       text-align: center;
       max-width: 500px;
       width: 90%;
@@ -281,7 +281,7 @@
     
     .station-btn {
       padding: 20px;
-      font-size:  1.5rem;
+      font-size: 1.5rem;
       font-weight: 600;
       border: none;
       border-radius: 10px;
@@ -324,7 +324,7 @@
     <a href="index.html"><img src="ies-logo-removebg-preview.png" alt="IES Logo" style="height: 40px;"></a>
     <h1>IESV Phone Check-In</h1>
     <div class="station-row">
-      <div class="station-info" id="stationInfo">Station:  --</div>
+      <div class="station-info" id="stationInfo">Station: --</div>
       <button class="change-btn" id="changeBtn">Change</button>
     </div>
   </div>
@@ -404,7 +404,7 @@
       // Station selection
       document.querySelectorAll('.station-btn').forEach(btn => {
         btn.addEventListener('click', () => {
-          station = btn. dataset.station;
+          station = btn.dataset.station;
           localStorage.setItem('iesv_station', station);
           stationInfo.textContent = `Station: ${station}`;
           stationModal.classList.add('hidden');
@@ -446,7 +446,7 @@
       
       testToggle.addEventListener('click', () => {
         testToggle.classList.toggle('active');
-        testInputRow. classList. toggle('hidden');
+        testInputRow.classList. toggle('hidden');
         if (! testInputRow.classList.contains('hidden')) {
           testTagInput.focus();
         }
@@ -471,7 +471,7 @@
       });
     }
     
-    // ⚡ OPTIMIZED VERSION - Only this function changed
+    // ⚡ OPTIMIZED:  This is the ONLY function that changed
     async function handleScan(tagId) {
       // Clear any pending reset
       if (clearTimer) {
@@ -484,13 +484,13 @@
       
       if (navigator.onLine) {
         try {
-          // OPTIMIZED: Single API call instead of two (removed lookup call)
+          // OPTIMIZED: Single API call instead of lookup + scan
           const result = await doScan(tagId);
           
-          // Handle class mismatch error (now from backend)
+          // Handle class mismatch error
           if (result.error === 'CLASS_MISMATCH') {
             isUnrecognizedTag = false;
-            showStatus('error', result.student.name, result.student.class, '');
+            showStatus('error', result.student.name, result. student.class, '');
             errorMessage.textContent = result.message;
             clearTimer = setTimeout(resetDisplay, 5000);
             return;
@@ -532,7 +532,7 @@
         isUnrecognizedTag = false;
         showStatus('error', result. student.name, result.student. class, '');
         errorMessage.textContent = result.message;
-      } else if (result.error === 'Tag not found') {
+      } else if (result. error === 'Tag not found') {
         isUnrecognizedTag = true;
         showStatus('error', 'Unknown Tag', '', 'Tag not registered');
         statusBox.classList.add('clickable');
@@ -548,7 +548,7 @@
       studentName.style.display = 'block';
       studentClass.style. display = 'block';
       statusLabel.style.display = 'block';
-      errorMessage.style.display = 'none';
+      errorMessage. style.display = 'none';
       
       studentName.textContent = name;
       studentClass.textContent = cls;
@@ -556,17 +556,17 @@
       
       switch (type) {
         case 'in':
-          statusBox. classList.add('status-in');
+          statusBox.classList. add('status-in');
           break;
-        case 'out': 
-          statusBox.classList.add('status-out');
+        case 'out':
+          statusBox.classList. add('status-out');
           break;
-        case 'error': 
+        case 'error':
           statusBox.classList.add('status-error');
           errorMessage.style.display = 'block';
           break;
         default:
-          statusBox.classList. add('status-ready');
+          statusBox.classList.add('status-ready');
       }
     }
     
@@ -592,7 +592,7 @@
     
     function updateQueueDisplay() {
       if (scanQueue.length > 0) {
-        queueCount.textContent = `Queued: ${scanQueue. length}`;
+        queueCount.textContent = `Queued: ${scanQueue.length}`;
         queueCount.classList.add('show');
       } else {
         queueCount.classList.remove('show');
@@ -600,7 +600,7 @@
     }
     
     async function processQueue() {
-      if (isProcessing || scanQueue. length === 0 || ! navigator.onLine) return;
+      if (isProcessing || scanQueue.length === 0 || ! navigator.onLine) return;
       
       isProcessing = true;
       
@@ -620,7 +620,7 @@
       isProcessing = false;
       
       // Retry in 30 seconds if still have items
-      if (scanQueue.length > 0) {
+      if (scanQueue. length > 0) {
         setTimeout(processQueue, 30000);
       }
     }
