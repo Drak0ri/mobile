@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>IESV Override Panel</title>
-  <link rel="icon" href="ies. ico">
+  <link rel="icon" href="ies.ico">
   <style>
     * {
       box-sizing: border-box;
@@ -14,7 +14,7 @@
     
     body {
       font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-      background:  #1a1a2e;
+      background: #1a1a2e;
       color: white;
       min-height: 100vh;
     }
@@ -39,7 +39,7 @@
       background: #ef4444;
       color: white;
       font-weight: 600;
-      cursor:  pointer;
+      cursor: pointer;
     }
     
     /* Login screen */
@@ -75,7 +75,7 @@
       margin-bottom: 20px;
     }
     
-    .login-input: focus {
+    .login-input:focus {
       outline: none;
       border-color: #6366f1;
     }
@@ -84,7 +84,7 @@
       width: 100%;
       padding: 15px;
       font-size: 1.1rem;
-      font-weight:  600;
+      font-weight: 600;
       border: none;
       border-radius: 8px;
       background: #6366f1;
@@ -93,7 +93,7 @@
     }
     
     .login-btn:hover {
-      background:  #4f46e5;
+      background: #4f46e5;
     }
     
     .login-error {
@@ -116,7 +116,7 @@
     .search-section {
       background: #16213e;
       padding: 25px;
-      border-radius:  12px;
+      border-radius: 12px;
       margin-bottom: 20px;
     }
     
@@ -127,7 +127,7 @@
     
     .search-input {
       width: 100%;
-      padding:  15px;
+      padding: 15px;
       font-size: 1rem;
       border: 2px solid #4a5568;
       border-radius: 8px;
@@ -136,14 +136,14 @@
     }
     
     .search-input:focus {
-      outline:  none;
-      border-color:  #6366f1;
+      outline: none;
+      border-color: #6366f1;
     }
     
     .search-results {
       margin-top: 15px;
       max-height: 300px;
-      overflow-y:  auto;
+      overflow-y: auto;
     }
     
     .search-result {
@@ -158,16 +158,16 @@
       transition: background 0.2s;
     }
     
-    . search-result:hover {
+    .search-result:hover {
       background: #4a5568;
     }
     
-    .search-result. selected {
+    .search-result.selected {
       background: #6366f1;
     }
     
     .result-name {
-      font-weight:  500;
+      font-weight: 500;
     }
     
     .result-class {
@@ -178,13 +178,13 @@
     .result-status {
       display: flex;
       align-items: center;
-      gap:  8px;
+      gap: 8px;
     }
     
     .status-dot {
       width: 12px;
       height: 12px;
-      border-radius:  50%;
+      border-radius: 50%;
     }
     
     .status-dot.in { background: #10b981; }
@@ -194,7 +194,7 @@
     .selected-section {
       background: #16213e;
       padding: 25px;
-      border-radius:  12px;
+      border-radius: 12px;
       display: none;
     }
     
@@ -211,9 +211,9 @@
       border-bottom: 1px solid #4a5568;
     }
     
-    . selected-name {
+    .selected-name {
       font-size: 1.5rem;
-      font-weight:  600;
+      font-weight: 600;
     }
     
     .selected-info {
@@ -246,7 +246,7 @@
       flex: 1;
       min-width: 150px;
       padding: 20px;
-      font-size:  1.1rem;
+      font-size: 1.1rem;
       font-weight: 600;
       border: none;
       border-radius: 10px;
@@ -268,8 +268,8 @@
       color: white;
     }
     
-    . btn-out {
-      background:  #ef4444;
+    .btn-out {
+      background: #ef4444;
       color: white;
     }
     
@@ -278,9 +278,9 @@
       color: black;
     }
     
-    . feedback {
-      margin-top:  20px;
-      padding:  15px;
+    .feedback {
+      margin-top: 20px;
+      padding: 15px;
       border-radius: 8px;
       text-align: center;
       display: none;
@@ -290,11 +290,11 @@
       display: block;
     }
     
-    .feedback. success {
+    .feedback.success {
       background: #065f46;
     }
     
-    .feedback. error {
+    .feedback.error {
       background: #7f1d1d;
     }
     
@@ -305,7 +305,7 @@
 </head>
 <body>
   <div class="header">
-    <a href="index.html"><img src="ies-logo-removebg-preview.png" alt="IES Logo" style="height:  40px;"></a>
+    <a href="index.html"><img src="ies-logo-removebg-preview.png" alt="IES Logo" style="height: 40px;"></a>
     <h1>🔧 IESV Override Panel</h1>
     <button class="lock-btn hidden" id="lockBtn">Lock</button>
   </div>
@@ -352,7 +352,7 @@
 
   <script>
     const API_URL = 'https://script.google.com/macros/s/AKfycbyGqqS1q6hvJEKpXRFLbqG01Pa_6uVVNCw6GHiUiFVc-5F2cMzd1ZRZqn-ZUL3Qq5hpGA/exec';
-    const PASSWORD = 'iesv2025'; // Change this
+    const PASSWORD = 'Winter2026';
     
     let students = [];
     let selectedStudent = null;
@@ -363,7 +363,7 @@
     const passwordInput = document.getElementById('passwordInput');
     const loginBtn = document.getElementById('loginBtn');
     const loginError = document.getElementById('loginError');
-    const searchInput = document. getElementById('searchInput');
+    const searchInput = document.getElementById('searchInput');
     const searchResults = document.getElementById('searchResults');
     const selectedSection = document.getElementById('selectedSection');
     const selectedName = document.getElementById('selectedName');
@@ -383,13 +383,13 @@
     
     function tryLogin() {
       if (passwordInput.value === PASSWORD) {
-        loginScreen. classList.add('hidden');
+        loginScreen.classList.add('hidden');
         panel.classList.add('show');
         lockBtn.classList.remove('hidden');
         loadStudents();
       } else {
         loginError.classList.remove('hidden');
-        passwordInput. value = '';
+        passwordInput.value = '';
       }
     }
     
@@ -397,7 +397,7 @@
     lockBtn.addEventListener('click', () => {
       panel.classList.remove('show');
       loginScreen.classList.remove('hidden');
-      lockBtn.classList. add('hidden');
+      lockBtn.classList.add('hidden');
       passwordInput.value = '';
       loginError.classList.add('hidden');
       selectedStudent = null;
@@ -412,9 +412,8 @@
         const url = `${API_URL}?action=getStatus`;
         const response = await fetch(url);
         const result = await response.json();
-        console.log('getStatus result:', result); // DEBUG
+        console.log('getStatus result:', result);
         if (result.success) {
-          // FIXED: Use result.students (that's what getStatus returns)
           students = result.students || [];
         }
       } catch (err) {
@@ -426,7 +425,7 @@
     searchInput.addEventListener('input', () => {
       const query = searchInput.value.toLowerCase().trim();
       
-      if (query. length < 2) {
+      if (query.length < 2) {
         searchResults.innerHTML = '';
         return;
       }
@@ -448,7 +447,7 @@
             <div class="result-class">${s.class}</div>
           </div>
           <div class="result-status">
-            <div class="status-dot ${s. status === 'IN' ? 'in' : 'out'}"></div>
+            <div class="status-dot ${s.status === 'IN' ? 'in' : 'out'}"></div>
             <span>${s.status === 'IN' ? 'IN' : 'OUT'}</span>
           </div>
         </div>
@@ -468,14 +467,14 @@
       
       // Update UI
       document.querySelectorAll('.search-result').forEach(el => {
-        el.classList.toggle('selected', el. dataset.id === String(id));
+        el.classList.toggle('selected', el.dataset.id === String(id));
       });
       
       selectedSection.classList.add('show');
-      selectedName. textContent = student.name;
+      selectedName.textContent = student.name;
       selectedClass.textContent = student.class;
       selectedDot.className = `status-dot ${student.status === 'IN' ? 'in' : 'out'}`;
-      selectedStatusText.textContent = student.status === 'IN' ? 'IN' :  'OUT';
+      selectedStatusText.textContent = student.status === 'IN' ? 'IN' : 'OUT';
       
       feedback.classList.remove('show');
     }
@@ -493,11 +492,11 @@
       btnClear.disabled = true;
       
       try {
-        const url = `${API_URL}?action=override&studentId=${encodeURIComponent(selectedStudent. id)}&newStatus=${action}`;
-        console.log('Override URL:', url); // DEBUG
+        const url = `${API_URL}?action=override&studentId=${encodeURIComponent(selectedStudent.id)}&newStatus=${action}`;
+        console.log('Override URL:', url);
         const response = await fetch(url);
         const result = await response.json();
-        console.log('Override result:', result); // DEBUG
+        console.log('Override result:', result);
         
         if (result.success) {
           showFeedback(`${selectedStudent.name} set to ${result.student.status}`, 'success');
@@ -505,9 +504,9 @@
           // Update local data
           const idx = students.findIndex(s => String(s.id) === String(selectedStudent.id));
           if (idx !== -1) {
-            students[idx]. status = result.student.status;
+            students[idx].status = result.student.status;
           }
-          selectedStudent. status = result.student.status;
+          selectedStudent.status = result.student.status;
           
           // Update display
           selectedDot.className = `status-dot ${result.student.status === 'IN' ? 'in' : 'out'}`;
@@ -523,11 +522,11 @@
           showFeedback(`Error: ${result.error}`, 'error');
         }
       } catch (err) {
-        showFeedback(`Failed:  ${err.message}`, 'error');
+        showFeedback(`Failed: ${err.message}`, 'error');
       }
       
       btnIn.disabled = false;
-      btnOut. disabled = false;
+      btnOut.disabled = false;
       btnClear.disabled = false;
     }
     
