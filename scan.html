@@ -98,6 +98,20 @@
       border: 3px solid #f59e0b;
     }
     
+    .status-error.clickable {
+      cursor: pointer;
+      transition: opacity 0.2s, transform 0.1s;
+    }
+    
+    .status-error.clickable:hover {
+      opacity: 0.9;
+      transform: scale(1.02);
+    }
+    
+    .status-error.clickable:active {
+      transform: scale(0.98);
+    }
+    
     .student-name {
       font-size: 4rem;
       font-weight: 700;
@@ -348,6 +362,7 @@
     let scanQueue = JSON.parse(localStorage.getItem('iesv_queue') || '[]');
     let isProcessing = false;
     let clearTimer = null;
+    let isUnrecognizedTag = false;
     
     const rfidInput = document.getElementById('rfidInput');
     const statusBox = document.getElementById('statusBox');
@@ -400,6 +415,13 @@
       // Change station button
       document.getElementById('changeBtn').addEventListener('click', () => {
         stationModal.classList.remove('hidden');
+      });
+      
+      // Click handler for unrecognized tag navigation
+      statusBox.addEventListener('click', () => {
+        if (isUnrecognizedTag) {
+          window.location.href = 'assignment.html';
+        }
       });
       
       // Online/offline detection
@@ -468,8 +490,11 @@
           
           if (!lookupResult.success) {
             if (lookupResult.error === 'Tag not found') {
+              isUnrecognizedTag = true;
               showStatus('error', 'Unknown Tag', '', 'Tag not registered');
+              statusBox.classList.add('clickable');
             } else {
+              isUnrecognizedTag = false;
               showStatus('error', 'Error', '', lookupResult.error || 'Lookup failed');
             }
             clearTimer = setTimeout(resetDisplay, 4000);
@@ -479,6 +504,7 @@
           // Check class mismatch
           const student = lookupResult.student;
           if (station && student.class !== station) {
+            isUnrecognizedTag = false;
             showStatus('error', student.name, student.class, '');
             errorMessage.textContent = `Wrong station! This is ${station}, student is in ${student.class}`;
             clearTimer = setTimeout(resetDisplay, 5000);
@@ -510,6 +536,7 @@
     
     function handleScanResult(result) {
       if (result.success) {
+        isUnrecognizedTag = false;
         const status = result.student.status;
         showStatus(
           status === 'IN' ? 'in' : 'out',
@@ -518,11 +545,15 @@
           status === 'IN' ? 'Phone IN' : 'Phone OUT'
         );
       } else if (result.error === 'STALE') {
+        isUnrecognizedTag = false;
         showStatus('error', result.student.name, result.student.class, '');
         errorMessage.textContent = result.message;
       } else if (result.error === 'Tag not found') {
+        isUnrecognizedTag = true;
         showStatus('error', 'Unknown Tag', '', 'Tag not registered');
+        statusBox.classList.add('clickable');
       } else {
+        isUnrecognizedTag = false;
         showStatus('error', 'Error', '', result.error || 'Scan failed');
       }
     }
@@ -556,6 +587,7 @@
     }
     
     function resetDisplay() {
+      isUnrecognizedTag = false;
       statusBox.className = 'status-box status-ready';
       readyMessage.style.display = 'block';
       studentName.style.display = 'none';
