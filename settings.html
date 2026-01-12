@@ -224,6 +224,85 @@
       padding: 40px;
       opacity: 0.6;
     }
+
+    /* Login screen */
+    .login-screen {
+      position: fixed;
+      inset: 0;
+      background: #1a1a2e;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 1000;
+    }
+    
+    .login-screen.hidden {
+      display: none;
+    }
+    
+    .login-box {
+      background: #16213e;
+      padding: 40px;
+      border-radius: 16px;
+      text-align: center;
+      width: 90%;
+      max-width: 400px;
+    }
+    
+    .login-box h2 {
+      margin-bottom: 30px;
+    }
+    
+    .login-input {
+      width: 100%;
+      padding: 15px;
+      font-size: 1.1rem;
+      border: 2px solid #4a5568;
+      border-radius: 8px;
+      background: #1a1a2e;
+      color: white;
+      text-align: center;
+      margin-bottom: 20px;
+    }
+    
+    .login-input:focus {
+      outline: none;
+      border-color: #6366f1;
+    }
+    
+    .login-btn {
+      width: 100%;
+      padding: 15px;
+      font-size: 1.1rem;
+      font-weight: 600;
+      border: none;
+      border-radius: 8px;
+      background: #6366f1;
+      color: white;
+      cursor: pointer;
+    }
+    
+    .login-btn:hover {
+      background: #4f46e5;
+    }
+    
+    .login-error {
+      color: #ef4444;
+      margin-top: 15px;
+      display: none;
+    }
+    
+    .login-error.show {
+      display: block;
+    }
+    
+    .content {
+      display: none;
+    }
+    
+    .content.show {
+      display: block;
+    }
     
     /* Responsive */
     @media (max-width: 768px) {
@@ -271,44 +350,79 @@
   </style>
 </head>
 <body>
-  <div class="header">
-    <a href="index.html"><img src="ies-logo-removebg-preview.png" alt="IES Logo" style="height: 40px;"></a>
-    <h1>IESV Settings</h1>
+  <!-- Login screen -->
+  <div class="login-screen" id="loginScreen">
+    <div class="login-box">
+      <h2>Enter Password</h2>
+      <input type="password" class="login-input" id="passwordInput" placeholder="Password">
+      <button class="login-btn" id="loginBtn">Unlock</button>
+      <div class="login-error" id="loginError">Incorrect password</div>
+    </div>
   </div>
-  
-  <div class="main">
-    <div class="section">
-      <div class="section-header">
-        <h2>End of Day Email Recipients</h2>
-        <button class="add-btn" id="addBtn">+ Add Recipient</button>
-      </div>
-      
-      <div id="tableContainer">
-        <div class="loading">Loading...</div>
-      </div>
-      
-      <div class="save-section">
-        <div class="feedback" id="feedback"></div>
-        <button class="save-btn" id="saveBtn">Save Changes</button>
+
+  <!-- Main content -->
+  <div class="content" id="content">
+    <div class="header">
+      <a href="index.html"><img src="ies-logo-removebg-preview.png" alt="IES Logo" style="height: 40px;"></a>
+      <h1>IESV Settings</h1>
+    </div>
+    
+    <div class="main">
+      <div class="section">
+        <div class="section-header">
+          <h2>End of Day Email Recipients</h2>
+          <button class="add-btn" id="addBtn">+ Add Recipient</button>
+        </div>
+        
+        <div id="tableContainer">
+          <div class="loading">Loading...</div>
+        </div>
+        
+        <div class="save-section">
+          <div class="feedback" id="feedback"></div>
+          <button class="save-btn" id="saveBtn">Save Changes</button>
+        </div>
       </div>
     </div>
   </div>
 
   <script>
+    const PASSWORD = 'Winter2026';
     const API_URL = 'https://script.google.com/macros/s/AKfycbyGqqS1q6hvJEKpXRFLbqG01Pa_6uVVNCw6GHiUiFVc-5F2cMzd1ZRZqn-ZUL3Qq5hpGA/exec';
     
     const SCOPES = ['Full', '7A', '7B', '7C', '8A', '8B', '8C', '9A', '9B', '9C', '9D'];
     
     let recipients = [];
     
+    const loginScreen = document.getElementById('loginScreen');
+    const content = document.getElementById('content');
+    const passwordInput = document.getElementById('passwordInput');
+    const loginBtn = document.getElementById('loginBtn');
+    const loginError = document.getElementById('loginError');
+    
     const tableContainer = document.getElementById('tableContainer');
     const addBtn = document.getElementById('addBtn');
     const saveBtn = document.getElementById('saveBtn');
     const feedback = document.getElementById('feedback');
     
-    // Load on start
-    loadSettings();
+    // Login
+    loginBtn.addEventListener('click', tryLogin);
+    passwordInput.addEventListener('keypress', (e) => {
+      if (e.key === 'Enter') tryLogin();
+    });
     
+    function tryLogin() {
+      if (passwordInput.value === PASSWORD) {
+        loginScreen.classList.add('hidden');
+        content.classList.add('show');
+        loadSettings();
+      } else {
+        loginError.classList.add('show');
+        passwordInput.value = '';
+      }
+    }
+    
+    // Load on start
     async function loadSettings() {
       try {
         const url = `${API_URL}?action=getSettings`;
