@@ -21,7 +21,7 @@
       color: white;
     }
     
-    .header {
+    . header {
       padding: 20px;
       text-align: center;
       background: #16213e;
@@ -29,7 +29,7 @@
     
     .header h1 {
       font-size: 1.5rem;
-      font-weight:  500;
+      font-weight: 500;
     }
     
     .station-row {
@@ -88,8 +88,8 @@
       border: 3px solid #10b981;
     }
     
-    .status-out {
-      background: #7f1d1d;
+    . status-out {
+      background:  #7f1d1d;
       border: 3px solid #ef4444;
     }
     
@@ -98,7 +98,7 @@
       border: 3px solid #f59e0b;
     }
     
-    .status-error.clickable {
+    .status-error. clickable {
       cursor: pointer;
       transition: opacity 0.2s, transform 0.1s;
     }
@@ -120,14 +120,14 @@
     }
     
     .student-class {
-      font-size: 1.5rem;
+      font-size:  1.5rem;
       opacity: 0.8;
       margin-bottom: 30px;
     }
     
     .status-label {
       font-size: 3rem;
-      font-weight: 600;
+      font-weight:  600;
       text-transform: uppercase;
       letter-spacing: 0.1em;
     }
@@ -214,13 +214,13 @@
       display: none;
     }
     
-    .test-input {
+    . test-input {
       padding: 10px 15px;
       font-size: 1rem;
       font-family: monospace;
-      border: 2px solid #4a5568;
-      border-radius: 8px;
-      background: #16213e;
+      border:  2px solid #4a5568;
+      border-radius:  8px;
+      background:  #16213e;
       color: white;
       width: 180px;
     }
@@ -263,7 +263,7 @@
     . modal-content {
       background:  #16213e;
       padding: 40px;
-      border-radius: 20px;
+      border-radius:  20px;
       text-align: center;
       max-width: 500px;
       width: 90%;
@@ -324,7 +324,7 @@
     <a href="index.html"><img src="ies-logo-removebg-preview.png" alt="IES Logo" style="height: 40px;"></a>
     <h1>IESV Phone Check-In</h1>
     <div class="station-row">
-      <div class="station-info" id="stationInfo">Station: --</div>
+      <div class="station-info" id="stationInfo">Station:  --</div>
       <button class="change-btn" id="changeBtn">Change</button>
     </div>
   </div>
@@ -404,7 +404,7 @@
       // Station selection
       document.querySelectorAll('.station-btn').forEach(btn => {
         btn.addEventListener('click', () => {
-          station = btn.dataset.station;
+          station = btn. dataset.station;
           localStorage.setItem('iesv_station', station);
           stationInfo.textContent = `Station: ${station}`;
           stationModal.classList.add('hidden');
@@ -446,7 +446,7 @@
       
       testToggle.addEventListener('click', () => {
         testToggle.classList.toggle('active');
-        testInputRow.classList. toggle('hidden');
+        testInputRow. classList. toggle('hidden');
         if (! testInputRow.classList.contains('hidden')) {
           testTagInput.focus();
         }
@@ -471,7 +471,7 @@
       });
     }
     
-    // ⚡ OPTIMIZED: Removed duplicate lookup call - cut scan time in half!
+    // ⚡ OPTIMIZED VERSION - Only this function changed
     async function handleScan(tagId) {
       // Clear any pending reset
       if (clearTimer) {
@@ -484,10 +484,10 @@
       
       if (navigator.onLine) {
         try {
-          // OPTIMIZED:  Single API call instead of two (lookup + scan)
+          // OPTIMIZED: Single API call instead of two (removed lookup call)
           const result = await doScan(tagId);
           
-          // Handle class mismatch error
+          // Handle class mismatch error (now from backend)
           if (result.error === 'CLASS_MISMATCH') {
             isUnrecognizedTag = false;
             showStatus('error', result.student.name, result.student.class, '');
@@ -498,7 +498,6 @@
           
           // Handle other results
           handleScanResult(result);
-          
         } catch (err) {
           // Queue for retry
           queueScan(tagId);
@@ -549,7 +548,7 @@
       studentName.style.display = 'block';
       studentClass.style. display = 'block';
       statusLabel.style.display = 'block';
-      errorMessage. style.display = 'none';
+      errorMessage.style.display = 'none';
       
       studentName.textContent = name;
       studentClass.textContent = cls;
@@ -559,11 +558,11 @@
         case 'in':
           statusBox. classList.add('status-in');
           break;
-        case 'out':
-          statusBox. classList.add('status-out');
+        case 'out': 
+          statusBox.classList.add('status-out');
           break;
-        case 'error':
-          statusBox. classList.add('status-error');
+        case 'error': 
+          statusBox.classList.add('status-error');
           errorMessage.style.display = 'block';
           break;
         default:
@@ -574,10 +573,10 @@
     function resetDisplay() {
       isUnrecognizedTag = false;
       statusBox.className = 'status-box status-ready';
-      readyMessage. style.display = 'block';
-      studentName.style.display = 'none';
+      readyMessage.style.display = 'block';
+      studentName.style. display = 'none';
       studentClass.style.display = 'none';
-      statusLabel.style.display = 'none';
+      statusLabel. style.display = 'none';
       errorMessage.style.display = 'none';
       studentName.textContent = '';
       studentClass.textContent = '';
@@ -593,7 +592,7 @@
     
     function updateQueueDisplay() {
       if (scanQueue.length > 0) {
-        queueCount.textContent = `Queued: ${scanQueue.length}`;
+        queueCount.textContent = `Queued: ${scanQueue. length}`;
         queueCount.classList.add('show');
       } else {
         queueCount.classList.remove('show');
@@ -601,7 +600,7 @@
     }
     
     async function processQueue() {
-      if (isProcessing || scanQueue.length === 0 || ! navigator.onLine) return;
+      if (isProcessing || scanQueue. length === 0 || ! navigator.onLine) return;
       
       isProcessing = true;
       
