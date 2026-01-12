@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>IESV Phone Check-In</title>
-  <link rel="icon" href="ies. ico">
+  <link rel="icon" href="ies.ico">
   <style>
     * {
       box-sizing: border-box;
@@ -46,7 +46,7 @@
     
     .change-btn {
       padding: 6px 15px;
-      font-size:  0.85rem;
+      font-size: 0.85rem;
       border: none;
       border-radius: 6px;
       background: #4a5568;
@@ -74,7 +74,7 @@
     
     .status-box {
       padding: 60px 40px;
-      border-radius:  20px;
+      border-radius: 20px;
       transition: all 0.3s ease;
     }
     
@@ -98,7 +98,7 @@
       border: 3px solid #f59e0b;
     }
     
-    .status-error. clickable {
+    .status-error.clickable {
       cursor: pointer;
       transition: opacity 0.2s, transform 0.1s;
     }
@@ -114,7 +114,7 @@
     
     . student-name {
       font-size: 4rem;
-      font-weight:  700;
+      font-weight: 700;
       margin-bottom: 20px;
       word-break: break-word;
     }
@@ -125,7 +125,7 @@
       margin-bottom: 30px;
     }
     
-    . status-label {
+    .status-label {
       font-size: 3rem;
       font-weight:  600;
       text-transform: uppercase;
@@ -151,7 +151,7 @@
     .offline-banner {
       display: none;
       background: #f59e0b;
-      color:  #000;
+      color: #000;
       padding: 10px;
       text-align: center;
       font-weight: 600;
@@ -190,17 +190,17 @@
       padding: 10px 20px;
       font-size: 0.9rem;
       border: none;
-      border-radius:  8px;
+      border-radius: 8px;
       background: #4a5568;
-      color:  white;
+      color: white;
       cursor: pointer;
     }
     
-    .test-toggle: hover {
-      background: #6366f1;
+    .test-toggle:hover {
+      background:  #6366f1;
     }
     
-    .test-toggle.active {
+    .test-toggle. active {
       background: #f59e0b;
       color: black;
     }
@@ -210,15 +210,15 @@
       gap: 10px;
     }
     
-    .test-input-row.hidden {
+    .test-input-row. hidden {
       display: none;
     }
     
-    .test-input {
+    . test-input {
       padding: 10px 15px;
-      font-size:  1rem;
+      font-size: 1rem;
       font-family: monospace;
-      border: 2px solid #4a5568;
+      border:  2px solid #4a5568;
       border-radius: 8px;
       background: #16213e;
       color: white;
@@ -281,8 +281,8 @@
     
     . station-btn {
       padding:  20px;
-      font-size: 1.5rem;
-      font-weight: 600;
+      font-size:  1.5rem;
+      font-weight:  600;
       border: none;
       border-radius: 10px;
       background: #4a5568;
@@ -324,7 +324,7 @@
     <a href="index.html"><img src="ies-logo-removebg-preview.png" alt="IES Logo" style="height: 40px;"></a>
     <h1>IESV Phone Check-In</h1>
     <div class="station-row">
-      <div class="station-info" id="stationInfo">Station: --</div>
+      <div class="station-info" id="stationInfo">Station:  --</div>
       <button class="change-btn" id="changeBtn">Change</button>
     </div>
   </div>
@@ -341,7 +341,7 @@
     </div>
   </div>
   
-  <div class="queue-count" id="queueCount">Queued: 0</div>
+  <div class="queue-count" id="queueCount">Queued:  0</div>
   
   <!-- Test mode panel -->
   <div class="test-panel" id="testPanel">
@@ -364,12 +364,12 @@
     let clearTimer = null;
     let isUnrecognizedTag = false;
     
-    const rfidInput = document. getElementById('rfidInput');
+    const rfidInput = document.getElementById('rfidInput');
     const statusBox = document.getElementById('statusBox');
     const studentName = document.getElementById('studentName');
     const studentClass = document.getElementById('studentClass');
     const statusLabel = document.getElementById('statusLabel');
-    const errorMessage = document.getElementById('errorMessage');
+    const errorMessage = document. getElementById('errorMessage');
     const readyMessage = document.getElementById('readyMessage');
     const stationInfo = document. getElementById('stationInfo');
     const stationModal = document.getElementById('stationModal');
@@ -393,7 +393,7 @@
       // Handle RFID input (reader sends data + Enter)
       rfidInput.addEventListener('keypress', (e) => {
         if (e.key === 'Enter') {
-          const tagId = rfidInput.value.trim();
+          const tagId = rfidInput. value.trim();
           rfidInput.value = '';
           if (tagId) {
             handleScan(tagId);
@@ -444,9 +444,9 @@
       const testTagInput = document.getElementById('testTagInput');
       const testBtn = document.getElementById('testBtn');
       
-      testToggle. addEventListener('click', () => {
+      testToggle.addEventListener('click', () => {
         testToggle.classList.toggle('active');
-        testInputRow.classList.toggle('hidden');
+        testInputRow.classList. toggle('hidden');
         if (! testInputRow.classList.contains('hidden')) {
           testTagInput.focus();
         }
@@ -462,7 +462,7 @@
       
       testTagInput.addEventListener('keypress', (e) => {
         if (e.key === 'Enter') {
-          const tagId = testTagInput.value.trim();
+          const tagId = testTagInput.value. trim();
           if (tagId) {
             handleScan(tagId);
             testTagInput.value = '';
@@ -471,7 +471,7 @@
       });
     }
     
-    // ⚡ OPTIMIZED:  Removed duplicate lookup call - cut scan time in half! 
+    // ⚡ OPTIMIZED: Removed duplicate lookup call - cut scan time in half! 
     async function handleScan(tagId) {
       // Clear any pending reset
       if (clearTimer) {
@@ -525,14 +525,14 @@
         const status = result.student.status;
         showStatus(
           status === 'IN' ? 'in' : 'out',
-          result.student. name,
-          result.student. class,
+          result.student.name,
+          result.student.class,
           status === 'IN' ? 'Phone IN' : 'Phone OUT'
         );
       } else if (result.error === 'STALE') {
         isUnrecognizedTag = false;
         showStatus('error', result.student.name, result. student.class, '');
-        errorMessage.textContent = result.message;
+        errorMessage.textContent = result. message;
       } else if (result.error === 'Tag not found') {
         isUnrecognizedTag = true;
         showStatus('error', 'Unknown Tag', '', 'Tag not registered');
