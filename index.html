@@ -401,7 +401,8 @@ function renderGrid(){
   });
 }
 
-// scan input: Enter triggers barcode match
+// scan input: manual typing filters grid
+document.getElementById('scanInput').addEventListener('input',renderGrid);
 document.getElementById('scanInput').addEventListener('keydown',e=>{
   if(e.key==='Enter'){
     const val=e.target.value.trim();
@@ -410,7 +411,40 @@ document.getElementById('scanInput').addEventListener('keydown',e=>{
     if(match){cycleStatus(match.id);e.target.value='';renderGrid();}
   }
 });
-document.getElementById('scanInput').addEventListener('input',renderGrid);
+
+// global barcode capture — works without clicking the search box first
+// scanners send characters rapidly then Enter; keyboard typing is slower
+let globalBuf='';
+let globalTimer=null;
+document.addEventListener('keydown',e=>{
+  // ignore if user is typing in any input, select, or textarea
+  const tag=document.activeElement.tagName;
+  if(tag==='INPUT'||tag==='SELECT'||tag==='TEXTAREA') return;
+  // ignore modifier-only keys and non-printable except Enter
+  if(e.key==='Enter'){
+    const val=globalBuf.trim();
+    globalBuf='';
+    if(val.length<4) return; // too short to be a barcode
+    const students=loadStudents();
+    const match=Object.values(students).find(s=>s.id.toLowerCase()===val.toLowerCase());
+    if(match){
+      cycleStatus(match.id);
+    } else {
+      // not a direct ID match — put it into the search box as a fallback
+      const si=document.getElementById('scanInput');
+      si.value=val;
+      si.focus();
+      renderGrid();
+    }
+    return;
+  }
+  if(e.key.length===1){
+    globalBuf+=e.key;
+    if(globalTimer) clearTimeout(globalTimer);
+    // if no Enter arrives within 100ms, assume it was keyboard typing — clear buffer
+    globalTimer=setTimeout(()=>{globalBuf=''},100);
+  }
+});
 
 // ─── ADD / REMOVE STUDENT ──────────────────────────────────
 function toggleAdd(){
