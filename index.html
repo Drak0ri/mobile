@@ -1,182 +1,700 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>IESV Phone Check-In</title>
-  <link rel="icon" href="ies.ico">
-  <style>
-    * {
-      box-sizing: border-box;
-      margin: 0;
-      padding: 0;
-    }
-    
-    body {
-      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-      background: #1a1a2e;
-      color: white;
-      min-height: 100vh;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      padding: 20px;
-    }
-    
-    .container {
-      max-width: 600px;
-      width: 100%;
-    }
-    
-    .header {
-      text-align: center;
-      margin-bottom: 50px;
-    }
-    
-    .logo {
-      height: 80px;
-      margin-bottom: 20px;
-    }
-    
-    .header h1 {
-      font-size: 2.5rem;
-      font-weight: 700;
-      margin-bottom: 10px;
-    }
-    
-    .header p {
-      font-size: 1.1rem;
-      opacity: 0.7;
-    }
-    
-    .nav-grid {
-      display: grid;
-      grid-template-columns: repeat(2, 1fr);
-      gap: 20px;
-    }
-    
-    .nav-card {
-      background: #16213e;
-      border-radius: 16px;
-      padding: 30px;
-      text-decoration: none;
-      color: white;
-      transition: transform 0.2s, background 0.2s;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      text-align: center;
-    }
-    
-    .nav-card:hover {
-      transform: translateY(-5px);
-      background: #1e2a4a;
-    }
-    
-    .nav-card.primary {
-      grid-column: span 2;
-      background: #6366f1;
-    }
-    
-    .nav-card.primary:hover {
-      background: #4f46e5;
-    }
-    
-    .nav-icon {
-      font-size: 3rem;
-      margin-bottom: 15px;
-    }
-    
-    .nav-title {
-      font-size: 1.3rem;
-      font-weight: 600;
-      margin-bottom: 8px;
-    }
-    
-    .nav-desc {
-      font-size: 0.9rem;
-      opacity: 0.7;
-      line-height: 1.4;
-    }
-    
-    .footer {
-      margin-top: 50px;
-      text-align: center;
-      opacity: 0.5;
-      font-size: 0.85rem;
-    }
-    
-    @media (max-width: 500px) {
-      .nav-grid {
-        grid-template-columns: 1fr;
-      }
-      
-      .nav-card.primary {
-        grid-column: span 1;
-      }
-      
-      .header h1 {
-        font-size: 2rem;
-      }
-    }
-  </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Phone Check-In</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/tabler-icons.min.css">
+<style>
+@import url('https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,400;0,9..40,500;0,9..40,600;1,9..40,400&family=DM+Mono:wght@400;500&display=swap');
+:root{
+  --bg:#f5f4f0;--surface:#ffffff;--surface2:#eeede7;--surface3:#e6e5de;
+  --border:rgba(0,0,0,0.1);--border2:rgba(0,0,0,0.2);
+  --text:#1a1a18;--text2:#5a5a56;--text3:#9a9a94;
+  --radius:10px;--radius-lg:14px;
+  --red-bg:#fcebeb;--red-border:#e24b4a;--red-text:#a32d2d;
+  --amber-bg:#faeeda;--amber-border:#ef9f27;--amber-text:#633806;
+  --green-bg:#eaf3de;--green-border:#97c459;--green-text:#3b6d11;
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;font-size:14px}
+.app{max-width:1100px;margin:0 auto;padding:1.25rem 1rem}
+
+/* NAV */
+.topbar{display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin-bottom:1.25rem;padding-bottom:1rem;border-bottom:0.5px solid var(--border2)}
+.topbar-title{font-size:18px;font-weight:600;margin-right:auto;display:flex;align-items:center;gap:8px}
+.topbar-title i{color:var(--text2)}
+.nav-btn{height:34px;padding:0 13px;border-radius:20px;border:0.5px solid var(--border2);background:var(--surface);color:var(--text2);font-size:13px;font-family:'DM Sans',sans-serif;cursor:pointer;display:inline-flex;align-items:center;gap:5px;transition:all 0.15s}
+.nav-btn:hover{background:var(--surface2);color:var(--text)}
+.nav-btn.active{background:var(--text);color:#fff;border-color:var(--text)}
+
+/* BUTTONS */
+.btn{height:36px;padding:0 14px;border-radius:var(--radius);border:0.5px solid var(--border2);background:var(--surface);color:var(--text);font-size:13px;font-family:'DM Sans',sans-serif;cursor:pointer;display:inline-flex;align-items:center;gap:6px;transition:background 0.15s}
+.btn:hover{background:var(--surface2)}
+.btn.danger{color:var(--red-text);border-color:var(--red-border)}
+.btn.danger:hover{background:var(--red-bg)}
+
+/* INPUTS */
+input,select{height:36px;padding:0 12px;border-radius:var(--radius);border:0.5px solid var(--border2);background:var(--surface);color:var(--text);font-size:13px;font-family:'DM Sans',sans-serif}
+input:focus,select:focus{outline:2px solid var(--text);outline-offset:1px}
+input::placeholder{color:var(--text3)}
+
+/* STATS */
+.stats-row{display:grid;grid-template-columns:repeat(auto-fit,minmax(110px,1fr));gap:8px;margin-bottom:1.25rem}
+.stat{background:var(--surface);border-radius:var(--radius-lg);padding:12px 14px;border:0.5px solid var(--border)}
+.stat-label{font-size:11px;color:var(--text2);margin-bottom:4px;text-transform:uppercase;letter-spacing:0.04em}
+.stat-val{font-size:24px;font-weight:600;line-height:1}
+
+/* TABS */
+.tab-bar{display:flex;gap:5px;flex-wrap:wrap;margin-bottom:1rem}
+.tab{padding:5px 13px;border-radius:20px;border:0.5px solid var(--border);background:var(--surface);color:var(--text2);cursor:pointer;font-size:12px;font-family:'DM Sans',sans-serif;transition:all 0.12s}
+.tab:hover{background:var(--surface2);color:var(--text)}
+.tab.active{background:var(--text);color:#fff;border-color:var(--text)}
+
+/* SCAN BAR */
+.scan-bar{display:flex;gap:8px;margin-bottom:1rem}
+.scan-bar input{flex:1;height:42px;font-size:14px}
+
+/* GRID */
+.student-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(170px,1fr));gap:7px}
+.chip{border-radius:var(--radius-lg);border:0.5px solid var(--border);padding:10px 12px;cursor:pointer;user-select:none;background:var(--surface);transition:transform 0.1s}
+.chip:active{transform:scale(0.97)}
+.chip-name{font-size:13px;font-weight:500;color:var(--text);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.chip-meta{font-size:11px;color:var(--text3);font-family:'DM Mono',monospace;margin-top:2px}
+.chip-badge{font-size:11px;font-weight:500;margin-top:6px;padding:2px 7px;border-radius:20px;display:inline-block}
+.chip.s-out{border-color:var(--red-border);background:var(--red-bg)}
+.chip.s-out .chip-name{color:var(--red-text)}
+.chip.s-out .chip-badge{background:var(--red-border);color:#fff}
+.chip.s-late{border-color:var(--amber-border);background:var(--amber-bg)}
+.chip.s-late .chip-name{color:var(--amber-text)}
+.chip.s-late .chip-badge{background:var(--amber-border);color:#fff}
+
+/* ADD PANEL */
+.add-panel{background:var(--surface2);border-radius:var(--radius-lg);padding:14px 16px;margin-bottom:1rem;display:none;gap:10px;flex-wrap:wrap;align-items:flex-end;border:0.5px solid var(--border)}
+.add-panel.open{display:flex}
+.add-panel label{font-size:11px;color:var(--text2);display:block;margin-bottom:3px;text-transform:uppercase;letter-spacing:0.04em}
+
+/* MODAL OVERLAY */
+.overlay{position:fixed;inset:0;background:rgba(0,0,0,0.45);z-index:100;display:none;align-items:center;justify-content:center;padding:1rem}
+.overlay.open{display:flex}
+.modal{background:var(--surface);border-radius:var(--radius-lg);padding:1.5rem;width:100%;max-width:520px;max-height:85vh;overflow-y:auto;border:0.5px solid var(--border2)}
+.modal-header{display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:1.25rem}
+.modal-title{font-size:16px;font-weight:600}
+.modal-close{background:none;border:none;cursor:pointer;color:var(--text2);font-size:20px;padding:0;line-height:1}
+.modal-close:hover{color:var(--text)}
+
+/* HISTORY / LOG */
+.log-entry{display:flex;align-items:center;gap:10px;padding:7px 0;border-bottom:0.5px solid var(--border);font-size:13px}
+.log-date{color:var(--text2);min-width:95px;font-family:'DM Mono',monospace;font-size:12px}
+.badge{font-size:11px;font-weight:500;padding:2px 8px;border-radius:20px}
+.badge-out{background:var(--red-bg);color:var(--red-text)}
+.badge-late{background:var(--amber-bg);color:var(--amber-text)}
+.badge-in{background:var(--green-bg);color:var(--green-text)}
+
+/* TREND BARS */
+.trend-row{display:flex;align-items:center;gap:10px;padding:6px 0;border-bottom:0.5px solid var(--border)}
+.trend-name{font-size:13px;flex:1;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.trend-bar-wrap{width:120px;height:8px;background:var(--surface2);border-radius:4px;overflow:hidden}
+.trend-bar{height:100%;border-radius:4px;background:var(--red-border)}
+.trend-count{font-size:12px;color:var(--text2);min-width:30px;text-align:right;font-family:'DM Mono',monospace}
+
+/* CLASS SUMMARY CARDS */
+.class-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:8px;margin-bottom:1.5rem}
+.class-card{background:var(--surface);border-radius:var(--radius-lg);border:0.5px solid var(--border);padding:12px 14px;cursor:pointer;transition:border-color 0.15s}
+.class-card:hover{border-color:var(--border2)}
+.class-card-name{font-size:15px;font-weight:600;margin-bottom:6px}
+.class-mini-stats{display:flex;gap:6px;flex-wrap:wrap}
+.mini-badge{font-size:11px;padding:2px 6px;border-radius:20px}
+
+/* SECTION VIEWS */
+.view{display:none}.view.active{display:block}
+
+/* TOAST */
+.toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%);background:#1a1a18;color:#f5f4f0;padding:10px 20px;border-radius:var(--radius);font-size:13px;z-index:200;opacity:0;transition:opacity 0.2s;pointer-events:none;white-space:nowrap}
+.toast.show{opacity:1}
+
+/* SEARCH */
+.search-input{width:100%;margin-bottom:1rem}
+
+/* STAT COLORS */
+.red{color:var(--red-text)}.amber{color:var(--amber-text)}.green{color:var(--green-text)}
+</style>
 </head>
 <body>
-  <div class="container">
-    <div class="header">
-      <img src="ies-logo-removebg-preview.png" alt="IES Logo" class="logo">
-      <h1>📱 IESV Phone Check-In</h1>
-      <p>Mobile phone management system</p>
-    </div>
-    
-    <nav class="nav-grid">
-      <a href="scan.html" class="nav-card primary">
-        <div class="nav-icon">📲</div>
-        <div class="nav-title">Scan Station</div>
-        <div class="nav-desc">Tap phones to check in/out</div>
-      </a>
-      
-      <a href="dashboard.html" class="nav-card">
-        <div class="nav-icon">📊</div>
-        <div class="nav-title">Dashboard</div>
-        <div class="nav-desc">View all student statuses</div>
-      </a>
-      
-      <a href="override.html" class="nav-card">
-        <div class="nav-icon">🔧</div>
-        <div class="nav-title">Override</div>
-        <div class="nav-desc">Manual status changes</div>
-      </a>
-      
-      <a href="weeklyreport.html" class="nav-card">
-        <div class="nav-icon">📈</div>
-        <div class="nav-title">Weekly Report</div>
-        <div class="nav-desc">Check-in statistics by week</div>
-      </a>
-      
-      <a href="assignment.html" class="nav-card">
-        <div class="nav-icon">🏷️</div>
-        <div class="nav-title">Tag Assignment</div>
-        <div class="nav-desc">Link RFID tags to students</div>
-      </a>
-      
-      <a href="settings.html" class="nav-card">
-        <div class="nav-icon">⚙️</div>
-        <div class="nav-title">Settings</div>
-        <div class="nav-desc">Email notifications config</div>
-      </a>
-      
-      <a href="https://docs.google.com/spreadsheets/d/1iTEGeUXfvtvTvWCg8dyb1vMArnpsvKuU41ICg2EuDis/edit?gid=89864075#gid=89864075" target="_blank" class="nav-card">
-        <div class="nav-icon">📋</div>
-        <div class="nav-title">Google Sheet</div>
-        <div class="nav-desc">Mobile Phone Check-In data</div>
-      </a>
-    </nav>
-    
-    <div class="footer">
-      IESV Phone Check-In System
-    </div>
+<div class="app">
+
+  <!-- TOP BAR -->
+  <div class="topbar">
+    <div class="topbar-title"><i class="ti ti-device-mobile-off" aria-hidden="true"></i>Phone check-in</div>
+    <button class="nav-btn active" id="navDash" onclick="switchView('dash')"><i class="ti ti-layout-grid" aria-hidden="true"></i>Dashboard</button>
+    <button class="nav-btn" id="navTrends" onclick="switchView('trends')"><i class="ti ti-chart-bar" aria-hidden="true"></i>Trends</button>
+    <button class="nav-btn" id="navStudents" onclick="switchView('students')"><i class="ti ti-users" aria-hidden="true"></i>Students</button>
+    <input type="date" id="datePicker" style="height:34px;font-size:13px;cursor:pointer">
   </div>
+
+  <!-- ADD STUDENT PANEL -->
+  <div class="add-panel" id="addPanel">
+    <div><label>Barcode / ID</label><input id="newId" placeholder="scan or type" style="width:150px"></div>
+    <div><label>Full name</label><input id="newName" placeholder="Student name" style="width:180px"></div>
+    <div><label>Class</label>
+      <select id="newClass">
+        <option>7A</option><option>7B</option><option>7C</option>
+        <option>8A</option><option>8B</option><option>8C</option>
+        <option>9A</option><option>9B</option><option>9C</option><option>9D</option>
+      </select>
+    </div>
+    <button class="btn" onclick="addStudent()"><i class="ti ti-check" aria-hidden="true"></i>Add</button>
+    <button class="btn" onclick="toggleAdd()"><i class="ti ti-x" aria-hidden="true"></i>Cancel</button>
+  </div>
+
+  <!-- ============ DASHBOARD VIEW ============ -->
+  <div class="view active" id="viewDash">
+    <div class="stats-row" id="statsRow"></div>
+    <div style="display:flex;align-items:center;gap:8px;margin-bottom:0.75rem;flex-wrap:wrap">
+      <div class="tab-bar" id="tabBar" style="margin:0;flex:1"></div>
+      <button class="btn" onclick="toggleAdd()"><i class="ti ti-plus" aria-hidden="true"></i>Add student</button>
+    </div>
+    <div class="scan-bar">
+      <input id="scanInput" placeholder="Scan barcode here, or type to search…" autocomplete="off">
+      <button class="btn" onclick="document.getElementById('scanInput').value='';renderGrid()"><i class="ti ti-x" aria-hidden="true"></i></button>
+    </div>
+    <div class="student-grid" id="studentGrid"></div>
+  </div>
+
+  <!-- ============ TRENDS VIEW ============ -->
+  <div class="view" id="viewTrends">
+    <div class="tab-bar" id="trendTabBar" style="margin-bottom:1.25rem"></div>
+    <div id="trendsContent"></div>
+  </div>
+
+  <!-- ============ STUDENTS VIEW ============ -->
+  <div class="view" id="viewStudents">
+    <div style="display:flex;gap:8px;margin-bottom:1rem;flex-wrap:wrap;align-items:center">
+      <input class="search-input" id="studentSearch" placeholder="Search by name or ID…" style="flex:1;min-width:200px;margin:0" oninput="renderStudentList()">
+      <select id="studentClassFilter" onchange="renderStudentList()" style="height:36px">
+        <option value="ALL">All classes</option>
+      </select>
+    </div>
+    <div id="studentListContent"></div>
+  </div>
+
+</div>
+
+<!-- STUDENT DRILLDOWN MODAL -->
+<div class="overlay" id="drillOverlay" onclick="closeDrill(event)">
+  <div class="modal" id="drillModal">
+    <div class="modal-header">
+      <div>
+        <div class="modal-title" id="drillName"></div>
+        <div style="font-size:12px;color:var(--text2);margin-top:2px;font-family:'DM Mono',monospace" id="drillMeta"></div>
+      </div>
+      <button class="modal-close" onclick="closeDrillModal()"><i class="ti ti-x"></i></button>
+    </div>
+    <div id="drillContent"></div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+const CLASSES=['7A','7B','7C','8A','8B','8C','9A','9B','9C','9D'];
+const RAW_STUDENTS=[
+['C005508976','Anton Larsson','7A'],['C005508979','Mias Hiji','7A'],['C005508986','Zaina Ali Mohammad','7A'],
+['C005508990','Hanadi Adami','7A'],['C005508997','Ksanet Tewolde','7A'],['C005508998','Rudransh Girdhar','7A'],
+['C005508999','Anthony Lind','7A'],['C005509007','Mohamad Dermus','7A'],['C005509008','Marwa Ali','7A'],
+['C005509009','Hussein Alahmad Alkhalaf','7A'],['C005509019','Esay Kiflemariam','7A'],['C005509032','Mari Danielyan','7A'],
+['C005509033','Maryna Kolosha','7A'],['C005509047','Julia Lennartsson','7A'],['C005509129','Pedro Rocha Duarte','7A'],
+['C005509173','Aditya Santosh','7A'],['C005509181','Razan Saad','7A'],['C005509313','Kevin-Alexander Arboleda Angulo','7A'],
+['C005509325','Firas Salih','7A'],['C005509331','Emil Brinkmark','7A'],['C005509375','Liam Diaz Sjöstrand','7A'],
+['C005509376','Anna Furgala Wretström','7A'],['C005509377','Chimdalu Okwo','7A'],['C005509389','Amira Ahmed Ibrahim','7A'],
+['C005509391','Vian Shikh Kanbar','7A'],['C005509396','Gazel Dawad','7A'],['C005509401',"Adam O'Callaghan",'7A'],
+['C005509435','Bence Acsádi','7A'],['C005547804','Brielle Jagerholm','7A'],
+['C005508980','Aiza Chaudhry','7B'],['C005508987','Isak Skotth','7B'],['C005508989','Layan Nakawa','7B'],
+['C005508995','Maya El Awad','7B'],['C005508996','Oubada Ayash','7B'],['C005509000','Yasmin Ibrahim','7B'],
+['C005509001','Elliott Pendlebury','7B'],['C005509004','Sibt Muhamad Yassin','7B'],['C005509005','Yasiin Abdimalik','7B'],
+['C005509006','Ahmed Hassan','7B'],['C005509015','Danial Julaei','7B'],['C005509016','Malek Alkhatib','7B'],
+['C005509017','Maandeeq Osman','7B'],['C005509020','Vincent Buchholz','7B'],['C005509151','Sky Lim Castillo','7B'],
+['C005509163','William Halvarsson','7B'],['C005509172','Ahmad Arif','7B'],['C005509315','Layan Al Kattan','7B'],
+['C005509318','Angela Lozano Quintero','7B'],['C005509329','Ridwan Abukar Omer','7B'],['C005509382','Fatima Aljawaheri','7B'],
+['C005509392','Alisa Rais','7B'],['C005509405','Loke Sjöberg Lodesten','7B'],['C005509413','Taminah Careloria Poblete','7B'],
+['C005509416','Marcel La Gioia','7B'],['C005509418','Yehia Hassan','7B'],['C005509419','Veronica Amigo Adolfsson','7B'],
+['C005509427','Arsema Bogale','7B'],['C005509429','Mohammad Rashid','7B'],['C005648070','Laya Irfan','7B'],
+['C005508975','Blessing Adonai','7C'],['C005508977','Briella Ukiza','7C'],['C005508978','Darya Hawas','7C'],
+['C005508981','Alice Granberg','7C'],['C005508988','Tanem Garib','7C'],['C005508991','Abdourahman Niass','7C'],
+['C005508992','Muhammad Hasnain','7C'],['C005508993','Bylsan Ataia','7C'],['C005508994','Penar Murad','7C'],
+['C005509002','Alessia Caspari Bark','7C'],['C005509003','Saya Fateh','7C'],['C005509012','Kurubel Gebrehiwet','7C'],
+['C005509013','M-Yahya Salami','7C'],['C005509014','Samuel Andemichael','7C'],['C005509021','Diego Imuetinyan','7C'],
+['C005509332','Loke Heldemar','7C'],['C005509339','Humphrey Ezeora','7C'],['C005509379','Obada Mohammed Deab Shawaheen','7C'],
+['C005509388','Yosef Ghanim','7C'],['C005509393','Freya Sankilampi Öst','7C'],['C005509398','Zaina Hraishat','7C'],
+['C005509404','Chloe Norman','7C'],['C005509410','Diana Ugur','7C'],['C005509411','Liam Isleem','7C'],
+['C005509436','Bawar Soleymanpour','7C'],['C005509437','Kalil Mohamud','7C'],
+['C005508985','Christian Pretorius','8A'],['C005509024','Sashwath Mohan','8A'],['C005509027','Mohamad Ali','8A'],
+['C005509038','Youstina Habte','8A'],['C005509039','Malak Said','8A'],['C005509046','Chakir Abou El Faraj','8A'],
+['C005509052','Roz Khoshnaw','8A'],['C005509057','Abdel Ayash','8A'],['C005509109','Abdulrahman Demashki','8A'],
+['C005509115','Muzayan Aljundi','8A'],['C005509126','Maida Qasim','8A'],['C005509140','Tristan Wenner Ekekrantz','8A'],
+['C005509160','Marwa Ahmed','8A'],['C005509162','Sai Majeti','8A'],['C005509171','Aisha Arif','8A'],
+['C005509176','Mayar Alwani','8A'],['C005509194','Fatema Basiss','8A'],['C005509197','Shayaan Shabbeer Ahmed','8A'],
+['C005509238','Edvin Eklund','8A'],['C005509240','Mehdi Aljawaheri','8A'],['C005509244','Darlington Adeyefa','8A'],
+['C005509280','Akram Abdulmohsen Abdulmajid','8A'],['C005509285','Victorien Peujio Saucedo','8A'],
+['C005509298','Yassin Ammar','8A'],['C005509308','Hadi Kabor','8A'],['C005509309','Erik Persson','8A'],
+['C005509326','Hibba Khan','8A'],['C005509338','Rakia Abukar Omer','8A'],['C005509423','Sara Sheikh Yusuf','8A'],
+['C005509425','Warisha IESV','8A'],
+['C005508973','Abedalrahman Ahmed','8B'],['C005509037','Yelyzaveta Sarnavska','8B'],['C005509053','Laith Alattari','8B'],
+['C005509055','Hanna Lindberg','8B'],['C005509110','Lara Hussein','8B'],['C005509116','Dilara Al Muhammad','8B'],
+['C005509117','Aisha Alrfai','8B'],['C005509134','Metin Mohammed','8B'],['C005509135','Hasan Khateeb','8B'],
+['C005509136','Nikole Kerdman','8B'],['C005509137','Yann Baranyizigiye','8B'],['C005509139','Lina Faraj','8B'],
+['C005509141','Elsa Partridge','8B'],['C005509145','Benhur Nesredin','8B'],['C005509152','Merna Abdellatif','8B'],
+['C005509159','Ahmad Murad','8B'],['C005509164','Akram Mahamed','8B'],['C005509165','Yones Salameh','8B'],
+['C005509168','Kadzuwa Zulu','8B'],['C005509239','Sama Mohammad','8B'],['C005509241','Mina Al-Hasabi','8B'],
+['C005509245','Abdulhakim Sharifabdi','8B'],['C005509278','Alend Mallaali','8B'],['C005509281','Zainab Al-Ansari','8B'],
+['C005509282','Rose-Lina Flaih','8B'],['C005509283','Shadbin Kardo Ahmed','8B'],['C005509304','Lulu Younis','8B'],
+['C005509320','Fatima Salih','8B'],['C005636007','Diana Wahid Taher','8B'],['C005636009','Noel Beregszászi','8B'],
+['C005648071','Ponetta Safar','8B'],
+['C005509011','Abdalkarim Abusulttan','8C'],['C005509029','Rufta Araya','8C'],['C005509040','Aya Said','8C'],
+['C005509041','Edvin Asri','8C'],['C005509042','Sosna Tesfazghi','8C'],['C005509043','Diako Saleyi','8C'],
+['C005509044','Elsa Kadriu','8C'],['C005509045','David Kibreab','8C'],['C005509050','Elias Allak','8C'],
+['C005509051','Shaima Kassim','8C'],['C005509054','Sidra Mukhtar','8C'],['C005509056','Elham Hassan','8C'],
+['C005509061','Majd Yacoub','8C'],['C005509062','Liann Kader','8C'],['C005509064','Felicia Nässén','8C'],
+['C005509067','Leif Almadani','8C'],['C005509068','Nour Lauand','8C'],['C005509069','Melisa Bakir','8C'],
+['C005509138','Mohammed Jabbar','8C'],['C005509158','Madelene Rasho','8C'],['C005509161','Ali Waldbeg','8C'],
+['C005509279','Omar Hreshat','8C'],['C005509284','Yunyi Dong','8C'],['C005509303','Retaj Alalbi','8C'],
+['C005509305','Gyan Mahesh','8C'],['C005509323','Fatima Qasem','8C'],['C005509406','Jozef Anyz','8C'],
+['C005508983','Safir Chellali','9A'],['C005508984','Jakub Palej','9A'],['C005509022','Yahye Abdimalik','9A'],
+['C005509102','Ömer Kuyumcu','9A'],['C005509103','Gabriel Dolinski','9A'],['C005509105','Timo Astala','9A'],
+['C005509118','Lara Alattari','9A'],['C005509120','Serina Alhaj-Khedr','9A'],['C005509125','Zaki Hamed','9A'],
+['C005509149','Daruin Hawezi','9A'],['C005509156','Nada Jowhar','9A'],['C005509157','Kezi Saleyi','9A'],
+['C005509167','Hamza Abdulahi','9A'],['C005509174','Karam Mohammad','9A'],['C005509177','Adam Soubhi Mohamed','9A'],
+['C005509184','Emelie Åberg','9A'],['C005509187','Philip Tunell','9A'],['C005509200','Oliver Angbah Elfström','9A'],
+['C005509205','Kessiah Harimenshi','9A'],['C005509208','Maqdis Ahmed','9A'],['C005509211','Besna Omar','9A'],
+['C005509226','Mohamed Muhyaldin','9A'],['C005509229','Ashlynn Irakoze','9A'],['C005509297','Ajdin Muratovic','9A'],
+['C005509306','Cherish Ayot','9A'],['C005509409','Ella Sindrell','9A'],
+['C005509048','Dhaksha Rachannagari','9B'],['C005509060','Noah Dag','9B'],['C005509123','Israa Jwad Kadhem','9B'],
+['C005509131','Ahmad Alnajm','9B'],['C005509132','Noor Maleki','9B'],['C005509133','Adam El Awad','9B'],
+['C005509155','Kevin Pishnamaz','9B'],['C005509170','Zeynab Naseri','9B'],['C005509179','Hermon Araya','9B'],
+['C005509183','Simon Zemariam','9B'],['C005509192','Heli Fors','9B'],['C005509193','Madeleine Kejbert','9B'],
+['C005509199','Sama Arafa','9B'],['C005509202','Linnea Nässén','9B'],['C005509207','Robel Zemeret Weldemariam','9B'],
+['C005509209','Malin Omar','9B'],['C005509210','Mariam Al-Hasabi','9B'],['C005509212','Ali Aldorr Yassin','9B'],
+['C005509213','Basak Hussaini','9B'],['C005509214','Abdullah Iwaimer','9B'],['C005509216','David Özgün','9B'],
+['C005509217','William Willgrén','9B'],['C005509218','Mustafe Sharifabdi','9B'],['C005509220','Muhammad Mirpolatov','9B'],
+['C005509221','Ghena Khdeir','9B'],['C005509225','Layal Safour','9B'],['C005509314','Barkat Abdoulkader','9B'],
+['C005508982','Sumanth Vempati','9C'],['C005509023','Weiron Öhrström','9C'],['C005509028','Mahmud IESV','9C'],
+['C005509031','Aros Goll','9C'],['C005509106','Wissam Tlas','9C'],['C005509108','Manassé Elambi','9C'],
+['C005509114','Mehreen Kolleri Palakkampokkil','9C'],['C005509119','Dima Al-Azzawi','9C'],['C005509122','Jouri Saleh','9C'],
+['C005509143','Aidan Gang','9C'],['C005509150','Layth Jbili','9C'],['C005509175','Gargi Kanchan','9C'],
+['C005509186','Paulina Coppin','9C'],['C005509188','Amir Idrisov','9C'],['C005509189','Sara Hamood','9C'],
+['C005509191','Stacy Lind','9C'],['C005509201','Hossie Tesfazghi','9C'],['C005509203','Ruweda Sami','9C'],
+['C005509206','Victoria Karo','9C'],['C005509223','Chinazom Michael Okeke','9C'],['C005509228','Ruchir Chembeti','9C'],
+['C005509243','Cassandra Staf','9C'],['C005509341','Esha Abia','9C'],
+['C005509030','Veronika Hornostai','9D'],['C005509035','Johana Diaz Ordinola','9D'],['C005509049','Zhivan Mohammed','9D'],
+['C005509107','Asha Ahmed','9D'],['C005509121','Josef Ismail','9D'],['C005509124','Sara Ibrahim','9D'],
+['C005509127','Arad Nourmohamadian','9D'],['C005509128','Marta Rocha Duarte','9D'],['C005509130','Adam Adam','9D'],
+['C005509142','Rugaya Al-Ansari','9D'],['C005509144','Nada Sari','9D'],['C005509146','Anis Yousuf','9D'],
+['C005509147','Alexander Mirhosseini','9D'],['C005509148','Emil Lindblom','9D'],['C005509154','Benin Abbas','9D'],
+['C005509182','Johnny Vuong','9D'],['C005509185','Max Wedberg','9D'],['C005509198','Nooh Abdullahi Abukar','9D'],
+['C005509215','Ahmed Al-Sultan','9D'],['C005509222','Misheel Zolbayar','9D'],['C005509224','Akram Sabri','9D'],
+['C005509227','Joud Qataa','9D'],['C005509242','Muscab Sharifabdi','9D'],
+['C005509295','Pahanya Ekanayake Mudiyanselage','9D'],['C005509296','Fanny Molin','9D'],
+['C005509307','Eda Peujio Saucedo','9D'],['C005509317','Viyan Önen','9D'],['C005509327','Said Abukar Omer','9D']
+];
+
+// ─── STORAGE ───────────────────────────────────────────────
+function todayKey(){return new Date().toISOString().slice(0,10)}
+function loadStudents(){
+  const s=localStorage.getItem('phc_students');
+  if(s) return JSON.parse(s);
+  const d={};
+  RAW_STUDENTS.forEach(([id,name,cls])=>{d[id]={id,name,cls,active:true}});
+  localStorage.setItem('phc_students',JSON.stringify(d));
+  return d;
+}
+function saveStudents(d){localStorage.setItem('phc_students',JSON.stringify(d))}
+function loadLogs(){const s=localStorage.getItem('phc_logs');return s?JSON.parse(s):{}}
+function saveLogs(d){localStorage.setItem('phc_logs',JSON.stringify(d))}
+function getDayLogs(dk){const l=loadLogs();return l[dk]||{}}
+function setDayLog(dk,id,status){
+  const l=loadLogs();
+  if(!l[dk]) l[dk]={};
+  if(status==='in') delete l[dk][id];
+  else l[dk][id]=status;
+  saveLogs(l);
+}
+
+// ─── STATE ─────────────────────────────────────────────────
+let currentClass='ALL';
+let currentDate=todayKey();
+let trendClass='ALL';
+
+const dp=document.getElementById('datePicker');
+dp.value=currentDate;
+dp.addEventListener('change',()=>{currentDate=dp.value;renderDash()});
+
+// ─── CYCLE STATUS ──────────────────────────────────────────
+function cycleStatus(id){
+  const dl=getDayLogs(currentDate);
+  const cur=dl[id]||'in';
+  const next=cur==='in'?'out':cur==='out'?'late':'in';
+  setDayLog(currentDate,id,next);
+  const labels={out:'Not handed in',late:'Late / Reception',in:'Handed in ✓'};
+  showToast(labels[next]);
+  renderDash();
+}
+
+// ─── VIEWS ─────────────────────────────────────────────────
+function switchView(v){
+  ['dash','trends','students'].forEach(n=>{
+    document.getElementById('view'+n.charAt(0).toUpperCase()+n.slice(1)).classList.toggle('active',n===v);
+    document.getElementById('nav'+n.charAt(0).toUpperCase()+n.slice(1)).classList.toggle('active',n===v);
+  });
+  if(v==='trends') renderTrends();
+  if(v==='students') renderStudentList();
+}
+
+// ─── DASHBOARD ─────────────────────────────────────────────
+function renderDash(){renderStats();renderTabs();renderGrid()}
+
+function renderStats(){
+  const students=loadStudents();
+  const dl=getDayLogs(currentDate);
+  const list=Object.values(students).filter(s=>s.active&&(currentClass==='ALL'||s.cls===currentClass));
+  const total=list.length;
+  const out=list.filter(s=>dl[s.id]==='out').length;
+  const late=list.filter(s=>dl[s.id]==='late').length;
+  const ok=total-out-late;
+  document.getElementById('statsRow').innerHTML=`
+    <div class="stat"><div class="stat-label">Total</div><div class="stat-val">${total}</div></div>
+    <div class="stat"><div class="stat-label">Not handed in</div><div class="stat-val" style="color:var(--red-text)">${out}</div></div>
+    <div class="stat"><div class="stat-label">Late / Reception</div><div class="stat-val" style="color:var(--amber-text)">${late}</div></div>
+    <div class="stat"><div class="stat-label">Handed in / OK</div><div class="stat-val" style="color:var(--green-text)">${ok}</div></div>
+  `;
+}
+
+function renderTabs(){
+  const bar=document.getElementById('tabBar');
+  bar.innerHTML='';
+  ['ALL',...CLASSES].forEach(c=>{
+    const b=document.createElement('button');
+    b.className='tab'+(c===currentClass?' active':'');
+    b.textContent=c;
+    b.onclick=()=>{currentClass=c;renderDash()};
+    bar.appendChild(b);
+  });
+}
+
+function renderGrid(){
+  const students=loadStudents();
+  const dl=getDayLogs(currentDate);
+  const q=document.getElementById('scanInput').value.trim().toLowerCase();
+  let list=Object.values(students).filter(s=>s.active&&(currentClass==='ALL'||s.cls===currentClass));
+  if(q) list=list.filter(s=>s.name.toLowerCase().includes(q)||s.id.toLowerCase().includes(q));
+  list.sort((a,b)=>a.name.localeCompare(b.name,'sv'));
+  const grid=document.getElementById('studentGrid');
+  grid.innerHTML='';
+  const statusLabel={out:'Not handed in',late:'Late / Reception'};
+  list.forEach(s=>{
+    const st=dl[s.id]||'in';
+    const d=document.createElement('div');
+    d.className='chip s-'+st;
+    d.title='Click to cycle status';
+    d.innerHTML=`<div class="chip-name">${s.name}</div><div class="chip-meta">${s.id} · ${s.cls}</div>${st!=='in'?`<div class="chip-badge">${statusLabel[st]}</div>`:''}`;
+    d.onclick=()=>cycleStatus(s.id);
+    grid.appendChild(d);
+  });
+}
+
+// scan input: Enter triggers barcode match
+document.getElementById('scanInput').addEventListener('keydown',e=>{
+  if(e.key==='Enter'){
+    const val=e.target.value.trim();
+    const students=loadStudents();
+    const match=Object.values(students).find(s=>s.id.toLowerCase()===val.toLowerCase());
+    if(match){cycleStatus(match.id);e.target.value='';renderGrid();}
+  }
+});
+document.getElementById('scanInput').addEventListener('input',renderGrid);
+
+// ─── ADD / REMOVE STUDENT ──────────────────────────────────
+function toggleAdd(){
+  document.getElementById('addPanel').classList.toggle('open');
+}
+function addStudent(){
+  const id=document.getElementById('newId').value.trim();
+  const name=document.getElementById('newName').value.trim();
+  const cls=document.getElementById('newClass').value;
+  if(!id||!name){showToast('Enter ID and name');return}
+  const students=loadStudents();
+  if(students[id]){showToast('ID already exists');return}
+  students[id]={id,name,cls,active:true};
+  saveStudents(students);
+  document.getElementById('newId').value='';
+  document.getElementById('newName').value='';
+  document.getElementById('addPanel').classList.remove('open');
+  showToast(`${name} added to ${cls}`);
+  renderDash();
+  renderStudentList();
+}
+function removeStudent(id){
+  const students=loadStudents();
+  if(!students[id]) return;
+  if(!confirm(`Remove ${students[id].name}? Their history will be kept.`)) return;
+  students[id].active=false;
+  saveStudents(students);
+  showToast('Student removed');
+  renderDash();
+  renderStudentList();
+  closeDrillModal();
+}
+function reactivateStudent(id){
+  const students=loadStudents();
+  if(!students[id]) return;
+  students[id].active=true;
+  saveStudents(students);
+  showToast('Student reactivated');
+  renderStudentList();
+}
+
+// ─── STUDENT LIST VIEW ─────────────────────────────────────
+function renderStudentList(){
+  // populate class filter
+  const cf=document.getElementById('studentClassFilter');
+  if(cf.options.length<=1){
+    CLASSES.forEach(c=>{const o=document.createElement('option');o.value=c;o.textContent=c;cf.appendChild(o)});
+  }
+  const q=document.getElementById('studentSearch').value.trim().toLowerCase();
+  const cls=cf.value;
+  const students=loadStudents();
+  let list=Object.values(students).filter(s=>(cls==='ALL'||s.cls===cls)&&(s.name.toLowerCase().includes(q)||s.id.toLowerCase().includes(q)));
+  list.sort((a,b)=>a.name.localeCompare(b.name,'sv'));
+  const logs=loadLogs();
+  const content=document.getElementById('studentListContent');
+  if(!list.length){content.innerHTML='<p style="color:var(--text3);font-size:13px">No students found.</p>';return}
+
+  // group by active/inactive
+  const active=list.filter(s=>s.active);
+  const inactive=list.filter(s=>!s.active);
+
+  let html='<div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:8px">';
+  active.forEach(s=>{
+    const incidents=Object.values(logs).filter(dl=>dl[s.id]).length;
+    html+=`<div style="background:var(--surface);border:0.5px solid var(--border);border-radius:var(--radius-lg);padding:12px 14px;display:flex;align-items:center;justify-content:space-between;gap:8px">
+      <div style="flex:1;min-width:0;cursor:pointer" onclick="openDrill('${s.id}')">
+        <div style="font-size:13px;font-weight:500;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${s.name}</div>
+        <div style="font-size:11px;color:var(--text3);font-family:'DM Mono',monospace">${s.id} · ${s.cls}</div>
+        ${incidents>0?`<div style="font-size:11px;color:var(--red-text);margin-top:3px">${incidents} incident${incidents>1?'s':''}</div>`:''}
+      </div>
+      <div style="display:flex;gap:5px;flex-shrink:0">
+        <button class="btn" style="height:28px;padding:0 8px;font-size:12px" onclick="openDrill('${s.id}')"><i class="ti ti-chart-line"></i></button>
+        <button class="btn danger" style="height:28px;padding:0 8px;font-size:12px" onclick="removeStudent('${s.id}')"><i class="ti ti-trash"></i></button>
+      </div>
+    </div>`;
+  });
+  html+='</div>';
+
+  if(inactive.length){
+    html+=`<div style="margin-top:1.5rem;margin-bottom:0.5rem;font-size:12px;color:var(--text3);text-transform:uppercase;letter-spacing:0.05em">Removed students</div>`;
+    html+='<div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:8px">';
+    inactive.forEach(s=>{
+      html+=`<div style="background:var(--surface2);border:0.5px solid var(--border);border-radius:var(--radius-lg);padding:10px 14px;display:flex;align-items:center;justify-content:space-between;gap:8px;opacity:0.6">
+        <div>
+          <div style="font-size:13px;font-weight:500;text-decoration:line-through">${s.name}</div>
+          <div style="font-size:11px;color:var(--text3);font-family:'DM Mono',monospace">${s.id} · ${s.cls}</div>
+        </div>
+        <button class="btn" style="height:28px;padding:0 8px;font-size:12px" onclick="reactivateStudent('${s.id}')">Restore</button>
+      </div>`;
+    });
+    html+='</div>';
+  }
+  content.innerHTML=html;
+}
+
+// ─── DRILLDOWN MODAL ───────────────────────────────────────
+function openDrill(id){
+  const students=loadStudents();
+  const s=students[id];
+  if(!s) return;
+  const logs=loadLogs();
+  document.getElementById('drillName').textContent=s.name;
+  document.getElementById('drillMeta').textContent=`${s.id} · Class ${s.cls}`;
+
+  // collect all log entries for this student
+  const entries=[];
+  Object.entries(logs).forEach(([date,dl])=>{if(dl[id]) entries.push({date,status:dl[id]})});
+  entries.sort((a,b)=>b.date.localeCompare(a.date));
+
+  const outCount=entries.filter(e=>e.status==='out').length;
+  const lateCount=entries.filter(e=>e.status==='late').length;
+  const totalDays=Object.keys(logs).length;
+
+  // last 7 days streak
+  const last7=[];
+  for(let i=6;i>=0;i--){const d=new Date();d.setDate(d.getDate()-i);last7.push(d.toISOString().slice(0,10))}
+
+  let html=`
+    <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:1.25rem">
+      <div class="stat"><div class="stat-label">Not in</div><div class="stat-val" style="color:var(--red-text)">${outCount}</div></div>
+      <div class="stat"><div class="stat-label">Late</div><div class="stat-val" style="color:var(--amber-text)">${lateCount}</div></div>
+      <div class="stat"><div class="stat-label">Total incidents</div><div class="stat-val">${outCount+lateCount}</div></div>
+    </div>
+    <div style="margin-bottom:1.25rem">
+      <div style="font-size:12px;color:var(--text2);text-transform:uppercase;letter-spacing:0.04em;margin-bottom:8px">Last 7 days</div>
+      <div style="display:flex;gap:5px">`;
+  last7.forEach(date=>{
+    const st=logs[date]?logs[date][id]||'ok':'–';
+    const label=date.slice(5);
+    const bg=st==='out'?'var(--red-bg)':st==='late'?'var(--amber-bg)':'var(--surface2)';
+    const border=st==='out'?'var(--red-border)':st==='late'?'var(--amber-border)':'var(--border)';
+    const tc=st==='out'?'var(--red-text)':st==='late'?'var(--amber-text)':'var(--text3)';
+    html+=`<div style="flex:1;text-align:center;padding:6px 4px;border-radius:8px;background:${bg};border:0.5px solid ${border}">
+      <div style="font-size:10px;color:${tc};font-family:'DM Mono',monospace">${label}</div>
+      <div style="font-size:11px;font-weight:500;color:${tc};margin-top:2px">${st==='out'?'OUT':st==='late'?'LATE':st==='ok'?'OK':'–'}</div>
+    </div>`;
+  });
+  html+=`</div></div>`;
+
+  if(entries.length){
+    html+=`<div style="font-size:12px;color:var(--text2);text-transform:uppercase;letter-spacing:0.04em;margin-bottom:8px">Full history</div>`;
+    entries.forEach(e=>{
+      const badge=e.status==='out'?'<span class="badge badge-out">Not handed in</span>':'<span class="badge badge-late">Late / Reception</span>';
+      html+=`<div class="log-entry"><span class="log-date">${e.date}</span>${badge}</div>`;
+    });
+  } else {
+    html+=`<div style="font-size:13px;color:var(--text3);padding:1rem 0">No incidents recorded for this student.</div>`;
+  }
+
+  document.getElementById('drillContent').innerHTML=html;
+  document.getElementById('drillOverlay').classList.add('open');
+}
+function closeDrillModal(){document.getElementById('drillOverlay').classList.remove('open')}
+function closeDrill(e){if(e.target===document.getElementById('drillOverlay')) closeDrillModal()}
+
+// ─── TRENDS VIEW ───────────────────────────────────────────
+function renderTrends(){
+  // rebuild trend tabs
+  const bar=document.getElementById('trendTabBar');
+  bar.innerHTML='';
+  ['ALL',...CLASSES].forEach(c=>{
+    const b=document.createElement('button');
+    b.className='tab'+(c===trendClass?' active':'');
+    b.textContent=c;
+    b.onclick=()=>{trendClass=c;renderTrendContent()};
+    bar.appendChild(b);
+  });
+  renderTrendContent();
+}
+
+function renderTrendContent(){
+  const students=loadStudents();
+  const logs=loadLogs();
+  const allDates=Object.keys(logs).sort();
+  const last30=allDates.slice(-30);
+
+  // per-class summary
+  const classStats={};
+  CLASSES.forEach(c=>{classStats[c]={out:0,late:0,days:new Set()}});
+  Object.entries(logs).forEach(([date,dl])=>{
+    Object.entries(dl).forEach(([id,st])=>{
+      const s=students[id];
+      if(!s||!s.active) return;
+      if(!classStats[s.cls]) return;
+      classStats[s.cls][st]=(classStats[s.cls][st]||0)+1;
+      classStats[s.cls].days.add(date);
+    });
+  });
+
+  // top repeat offenders (all time)
+  const studentTotals=Object.values(students).filter(s=>s.active&&(trendClass==='ALL'||s.cls===trendClass)).map(s=>{
+    const total=Object.values(logs).filter(dl=>dl[s.id]).length;
+    const out=Object.values(logs).filter(dl=>dl[s.id]==='out').length;
+    const late=Object.values(logs).filter(dl=>dl[s.id]==='late').length;
+    return{...s,total,out,late};
+  }).filter(s=>s.total>0).sort((a,b)=>b.total-a.total).slice(0,20);
+
+  const maxTotal=studentTotals.length?studentTotals[0].total:1;
+
+  // daily trend (last 14 days)
+  const last14=[];
+  for(let i=13;i>=0;i--){const d=new Date();d.setDate(d.getDate()-i);last14.push(d.toISOString().slice(0,10))}
+  const dailyCounts=last14.map(date=>{
+    const dl=logs[date]||{};
+    const entries=Object.entries(dl).filter(([id])=>{
+      const s=students[id];
+      return s&&s.active&&(trendClass==='ALL'||s.cls===trendClass);
+    });
+    return{date,out:entries.filter(([,st])=>st==='out').length,late:entries.filter(([,st])=>st==='late').length};
+  });
+  const maxDay=Math.max(1,...dailyCounts.map(d=>d.out+d.late));
+
+  let html='';
+
+  // class overview cards (only on ALL)
+  if(trendClass==='ALL'){
+    html+=`<div style="font-size:12px;color:var(--text2);text-transform:uppercase;letter-spacing:0.04em;margin-bottom:10px">Class overview (all time)</div>`;
+    html+=`<div class="class-grid">`;
+    CLASSES.forEach(c=>{
+      const cs=classStats[c];
+      const total=(cs.out||0)+(cs.late||0);
+      html+=`<div class="class-card" onclick="trendClass='${c}';renderTrends()">
+        <div class="class-card-name">${c}</div>
+        <div class="class-mini-stats">
+          <span class="mini-badge" style="background:var(--red-bg);color:var(--red-text)">${cs.out||0} out</span>
+          <span class="mini-badge" style="background:var(--amber-bg);color:var(--amber-text)">${cs.late||0} late</span>
+        </div>
+      </div>`;
+    });
+    html+=`</div>`;
+  }
+
+  // daily trend bars
+  html+=`<div style="font-size:12px;color:var(--text2);text-transform:uppercase;letter-spacing:0.04em;margin-bottom:10px;margin-top:1.25rem">Daily incidents — last 14 days${trendClass!=='ALL'?' · '+trendClass:''}</div>`;
+  html+=`<div style="display:flex;align-items:flex-end;gap:5px;height:80px;margin-bottom:1.5rem">`;
+  dailyCounts.forEach(d=>{
+    const h=maxDay>0?Math.round(((d.out+d.late)/maxDay)*70):0;
+    const hOut=maxDay>0?Math.round((d.out/maxDay)*70):0;
+    const hLate=h-hOut;
+    const label=d.date.slice(5);
+    html+=`<div style="flex:1;display:flex;flex-direction:column;align-items:center;gap:2px" title="${d.date}: ${d.out} not in, ${d.late} late">
+      <div style="width:100%;display:flex;flex-direction:column;align-items:center;justify-content:flex-end;height:70px;gap:1px">
+        ${hOut>0?`<div style="width:100%;height:${hOut}px;background:var(--red-border);border-radius:3px 3px 0 0"></div>`:''}
+        ${hLate>0?`<div style="width:100%;height:${hLate}px;background:var(--amber-border);border-radius:${hOut>0?'0':'3px 3px 0 0'} 0 0"></div>`:''}
+        ${h===0?`<div style="width:100%;height:3px;background:var(--surface3);border-radius:3px"></div>`:''}
+      </div>
+      <div style="font-size:9px;color:var(--text3);font-family:'DM Mono',monospace;white-space:nowrap">${label}</div>
+    </div>`;
+  });
+  html+=`</div>`;
+
+  // repeat offenders
+  if(studentTotals.length){
+    html+=`<div style="font-size:12px;color:var(--text2);text-transform:uppercase;letter-spacing:0.04em;margin-bottom:10px">Top repeat offenders${trendClass!=='ALL'?' · '+trendClass:''}</div>`;
+    studentTotals.forEach(s=>{
+      const pct=Math.round((s.total/maxTotal)*100);
+      html+=`<div class="trend-row" style="cursor:pointer" onclick="openDrill('${s.id}')">
+        <div class="trend-name">${s.name} <span style="font-size:11px;color:var(--text3)">${s.cls}</span></div>
+        <div style="display:flex;gap:5px;margin-right:6px">
+          <span class="badge badge-out">${s.out}</span>
+          <span class="badge badge-late">${s.late}</span>
+        </div>
+        <div class="trend-bar-wrap"><div class="trend-bar" style="width:${pct}%"></div></div>
+        <div class="trend-count">${s.total}</div>
+      </div>`;
+    });
+  } else {
+    html+=`<div style="font-size:13px;color:var(--text3);padding:1rem 0">No incidents recorded yet.</div>`;
+  }
+
+  document.getElementById('trendsContent').innerHTML=html;
+}
+
+// ─── TOAST ─────────────────────────────────────────────────
+let toastTimer=null;
+function showToast(msg){
+  const t=document.getElementById('toast');
+  t.textContent=msg;t.classList.add('show');
+  if(toastTimer) clearTimeout(toastTimer);
+  toastTimer=setTimeout(()=>t.classList.remove('show'),2200);
+}
+
+// ─── INIT ──────────────────────────────────────────────────
+renderDash();
+</script>
 </body>
 </html>
