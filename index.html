@@ -754,9 +754,7 @@ function handleCSVUpload(input){
   const reader=new FileReader();
   reader.onload=function(e){
     const text=e.target.result;
-    const lines=text.trim().split(/
-?
-/);
+    const lines=text.trim().split("\n");
     const students={};
     lines.forEach((line,i)=>{
       if(i===0&&line.toLowerCase().startsWith('id')) return;
@@ -787,9 +785,7 @@ function handleCSVUpload(input){
   reader.readAsText(file);
 }
 function downloadTemplate(){
-  const csv='ID,Name,Class
-C005508976,Anton Larsson,7A
-C005508979,Mias Hiji,7A';
+  const csv='ID,Name,Class\nC005508976,Anton Larsson,7A\nC005508979,Mias Hiji,7A';
   const a=document.createElement('a');
   a.href='data:text/csv;charset=utf-8,'+encodeURIComponent(csv);
   a.download='students-template.csv';
