@@ -122,6 +122,73 @@ input::placeholder{color:var(--text3)}
 </style>
 </head>
 <body>
+
+<!-- PIN SCREEN -->
+<div id="pinScreen" style="position:fixed;inset:0;background:var(--bg);z-index:999;display:flex;align-items:center;justify-content:center">
+  <div style="text-align:center;width:280px">
+    <div style="font-size:22px;font-weight:600;margin-bottom:6px">Phone Check-In</div>
+    <div style="font-size:13px;color:var(--text2);margin-bottom:2rem">Enter PIN to continue</div>
+    <div id="pinDots" style="display:flex;justify-content:center;gap:12px;margin-bottom:1.5rem">
+      <div class="dot"></div><div class="dot"></div><div class="dot"></div>
+      <div class="dot"></div><div class="dot"></div><div class="dot"></div>
+    </div>
+    <div id="pinError" style="font-size:12px;color:var(--red-text);height:16px;margin-bottom:0.75rem"></div>
+    <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:10px">
+      <button class="pinkey" onclick="pinPress('1')">1</button>
+      <button class="pinkey" onclick="pinPress('2')">2</button>
+      <button class="pinkey" onclick="pinPress('3')">3</button>
+      <button class="pinkey" onclick="pinPress('4')">4</button>
+      <button class="pinkey" onclick="pinPress('5')">5</button>
+      <button class="pinkey" onclick="pinPress('6')">6</button>
+      <button class="pinkey" onclick="pinPress('7')">7</button>
+      <button class="pinkey" onclick="pinPress('8')">8</button>
+      <button class="pinkey" onclick="pinPress('9')">9</button>
+      <button class="pinkey" onclick="pinPress('back')" style="font-size:18px">⌫</button>
+      <button class="pinkey" onclick="pinPress('0')">0</button>
+      <button class="pinkey" onclick="pinPress('enter')" style="background:var(--text);color:#fff;border-color:var(--text)">OK</button>
+    </div>
+  </div>
+</div>
+
+<style>
+.dot{width:12px;height:12px;border-radius:50%;border:1.5px solid var(--border2);background:transparent;transition:background 0.15s}
+.dot.filled{background:var(--text);border-color:var(--text)}
+.pinkey{height:56px;border-radius:var(--radius-lg);border:0.5px solid var(--border2);background:var(--surface);color:var(--text);font-size:20px;font-family:'DM Sans',sans-serif;font-weight:500;cursor:pointer;transition:background 0.12s}
+.pinkey:hover{background:var(--surface2)}
+.pinkey:active{background:var(--surface3)}
+</style>
+
+<script>
+const PIN='202601';
+let pinBuf='';
+function pinPress(v){
+  const err=document.getElementById('pinError');
+  err.textContent='';
+  if(v==='back'){pinBuf=pinBuf.slice(0,-1);}
+  else if(v==='enter'){checkPin();}
+  else if(pinBuf.length<6){pinBuf+=v;}
+  updateDots();
+  if(pinBuf.length===6) setTimeout(checkPin,120);
+}
+function updateDots(){
+  document.querySelectorAll('.dot').forEach((d,i)=>d.classList.toggle('filled',i<pinBuf.length));
+}
+function checkPin(){
+  if(pinBuf===PIN){
+    document.getElementById('pinScreen').style.display='none';
+  } else {
+    document.getElementById('pinError').textContent='Incorrect PIN';
+    pinBuf='';updateDots();
+  }
+}
+document.addEventListener('keydown',e=>{
+  if(document.getElementById('pinScreen').style.display==='none') return;
+  if(e.key>='0'&&e.key<='9') pinPress(e.key);
+  else if(e.key==='Backspace') pinPress('back');
+  else if(e.key==='Enter') pinPress('enter');
+});
+</script>
+
 <div class="app">
 
   <!-- TOP BAR -->
