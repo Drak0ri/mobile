@@ -217,6 +217,7 @@ document.addEventListener('keydown',e=>{
     <button class="nav-btn" id="navTrends" onclick="switchView('trends')"><i class="ti ti-chart-bar" aria-hidden="true"></i>Trends</button>
     <button class="nav-btn" id="navStudents" onclick="switchView('students')"><i class="ti ti-users" aria-hidden="true"></i>Students</button>
     <input type="date" id="datePicker" style="height:34px;font-size:13px;cursor:pointer">
+    <label class="nav-btn" style="cursor:pointer"><i class="ti ti-upload" aria-hidden="true"></i>Import<input type="file" accept=".csv" style="display:none" onchange="handleCSVUpload(this)"></label>
     <button class="nav-btn" onclick="exportCSV()"><i class="ti ti-download" aria-hidden="true"></i>Export</button>
   </div>
 
@@ -377,10 +378,21 @@ function renderGrid(){
   const students=loadStudents();
   const dl=getDayLogs(currentDate);
   const q=document.getElementById('scanInput').value.trim().toLowerCase();
+  const grid=document.getElementById('studentGrid');
+
+  if(!Object.values(students).some(s=>s.active)){
+    grid.innerHTML=`<div style="grid-column:1/-1;text-align:center;padding:3rem 1rem">
+      <i class="ti ti-users-off" style="font-size:36px;color:var(--text3);display:block;margin-bottom:12px"></i>
+      <div style="font-size:15px;font-weight:500;margin-bottom:6px">No students loaded</div>
+      <div style="font-size:13px;color:var(--text2);margin-bottom:1.25rem">Go to the Students tab to upload your CSV</div>
+      <button class="btn" onclick="switchView('students')"><i class="ti ti-arrow-right"></i>Go to Students</button>
+    </div>`;
+    return;
+  }
+
   let list=Object.values(students).filter(s=>s.active&&(currentClass==='ALL'||s.cls===currentClass));
   if(q) list=list.filter(s=>s.name.toLowerCase().includes(q)||s.id.toLowerCase().includes(q));
   list.sort((a,b)=>a.name.localeCompare(b.name,'sv'));
-  const grid=document.getElementById('studentGrid');
   grid.innerHTML='';
   const statusLabel={out:'Not handed in',late:'Late / Reception'};
   list.forEach(s=>{
@@ -481,26 +493,35 @@ function reactivateStudent(id){
 
 // ─── STUDENT LIST VIEW ─────────────────────────────────────
 function renderStudentList(){
-  // populate class filter
   const cf=document.getElementById('studentClassFilter');
   if(cf.options.length<=1){
     CLASSES.forEach(c=>{const o=document.createElement('option');o.value=c;o.textContent=c;cf.appendChild(o)});
   }
+  const students=loadStudents();
+  const active=Object.values(students).filter(s=>s.active);
+  const content=document.getElementById('studentListContent');
+
+  if(!active.length){
+    content.innerHTML=`<div style="text-align:center;padding:3rem 1rem">
+      <i class="ti ti-users-off" style="font-size:36px;color:var(--text3);display:block;margin-bottom:12px"></i>
+      <div style="font-size:15px;font-weight:500;margin-bottom:6px">No students loaded</div>
+      <div style="font-size:13px;color:var(--text2);margin-bottom:1.25rem">Upload a CSV to get started</div>
+      <label class="btn" style="cursor:pointer;display:inline-flex"><i class="ti ti-upload"></i>Upload students CSV<input type="file" accept=".csv" style="display:none" onchange="handleCSVUpload(this)"></label>
+    </div>`;
+    return;
+  }
+
   const q=document.getElementById('studentSearch').value.trim().toLowerCase();
   const cls=cf.value;
-  const students=loadStudents();
   let list=Object.values(students).filter(s=>(cls==='ALL'||s.cls===cls)&&(s.name.toLowerCase().includes(q)||s.id.toLowerCase().includes(q)));
   list.sort((a,b)=>a.name.localeCompare(b.name,'sv'));
   const logs=loadLogs();
-  const content=document.getElementById('studentListContent');
-  if(!list.length){content.innerHTML='<p style="color:var(--text3);font-size:13px">No students found.</p>';return}
 
-  // group by active/inactive
-  const active=list.filter(s=>s.active);
-  const inactive=list.filter(s=>!s.active);
+  const visibleActive=list.filter(s=>s.active);
+  const visibleInactive=list.filter(s=>!s.active);
 
   let html='<div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:8px">';
-  active.forEach(s=>{
+  visibleActive.forEach(s=>{
     const incidents=Object.values(logs).filter(dl=>dl[s.id]).length;
     html+=`<div style="background:var(--surface);border:0.5px solid var(--border);border-radius:var(--radius-lg);padding:12px 14px;display:flex;align-items:center;justify-content:space-between;gap:8px">
       <div style="flex:1;min-width:0;cursor:pointer" onclick="openDrill('${s.id}')">
@@ -516,10 +537,10 @@ function renderStudentList(){
   });
   html+='</div>';
 
-  if(inactive.length){
+  if(visibleInactive.length){
     html+=`<div style="margin-top:1.5rem;margin-bottom:0.5rem;font-size:12px;color:var(--text3);text-transform:uppercase;letter-spacing:0.05em">Removed students</div>`;
     html+='<div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:8px">';
-    inactive.forEach(s=>{
+    visibleInactive.forEach(s=>{
       html+=`<div style="background:var(--surface2);border:0.5px solid var(--border);border-radius:var(--radius-lg);padding:10px 14px;display:flex;align-items:center;justify-content:space-between;gap:8px;opacity:0.6">
         <div>
           <div style="font-size:13px;font-weight:500;text-decoration:line-through">${s.name}</div>
