@@ -189,6 +189,25 @@ document.addEventListener('keydown',e=>{
 });
 </script>
 
+
+<!-- UPLOAD SCREEN -->
+<div id="uploadScreen" style="position:fixed;inset:0;background:var(--bg);z-index:998;display:none;align-items:center;justify-content:center">
+  <div style="text-align:center;width:360px;padding:2rem">
+    <i class="ti ti-users" style="font-size:40px;color:var(--text2);margin-bottom:1rem;display:block" aria-hidden="true"></i>
+    <div style="font-size:18px;font-weight:600;margin-bottom:8px">No student data found</div>
+    <div style="font-size:13px;color:var(--text2);margin-bottom:1.5rem;line-height:1.6">Upload a CSV file to get started. Data is stored locally on this device only and never sent anywhere.</div>
+    <div style="background:var(--surface);border:0.5px solid var(--border2);border-radius:var(--radius-lg);padding:14px;margin-bottom:1rem;text-align:left">
+      <div style="font-size:12px;color:var(--text2);margin-bottom:6px;text-transform:uppercase;letter-spacing:0.04em">Expected CSV format</div>
+      <code style="font-size:12px;font-family:'DM Mono',monospace;color:var(--text);line-height:1.7;display:block">ID,Name,Class<br>C005508976,Anton Larsson,7A<br>C005508979,Mias Hiji,7A</code>
+    </div>
+    <div style="display:flex;gap:8px;justify-content:center;flex-wrap:wrap">
+      <label class="btn" style="cursor:pointer"><i class="ti ti-upload" aria-hidden="true"></i>Upload CSV<input type="file" accept=".csv" style="display:none" onchange="handleCSVUpload(this)"></label>
+      <button class="btn" onclick="downloadTemplate()"><i class="ti ti-download" aria-hidden="true"></i>Download template</button>
+    </div>
+    <div id="uploadError" style="font-size:12px;color:var(--red-text);margin-top:10px;min-height:16px"></div>
+  </div>
+</div>
+
 <div class="app">
 
   <!-- TOP BAR -->
@@ -243,6 +262,7 @@ document.addEventListener('keydown',e=>{
       <select id="studentClassFilter" onchange="renderStudentList()" style="height:36px">
         <option value="ALL">All classes</option>
       </select>
+      <button class="btn danger" onclick="clearStudentData()" title="Remove all student data from this device"><i class="ti ti-database-off" aria-hidden="true"></i>Clear data</button>
     </div>
     <div id="studentListContent"></div>
   </div>
@@ -267,114 +287,17 @@ document.addEventListener('keydown',e=>{
 
 <script>
 const CLASSES=['7A','7B','7C','8A','8B','8C','9A','9B','9C','9D'];
-const RAW_STUDENTS=[
-['C005508976','Anton Larsson','7A'],['C005508979','Mias Hiji','7A'],['C005508986','Zaina Ali Mohammad','7A'],
-['C005508990','Hanadi Adami','7A'],['C005508997','Ksanet Tewolde','7A'],['C005508998','Rudransh Girdhar','7A'],
-['C005508999','Anthony Lind','7A'],['C005509007','Mohamad Dermus','7A'],['C005509008','Marwa Ali','7A'],
-['C005509009','Hussein Alahmad Alkhalaf','7A'],['C005509019','Esay Kiflemariam','7A'],['C005509032','Mari Danielyan','7A'],
-['C005509033','Maryna Kolosha','7A'],['C005509047','Julia Lennartsson','7A'],['C005509129','Pedro Rocha Duarte','7A'],
-['C005509173','Aditya Santosh','7A'],['C005509181','Razan Saad','7A'],['C005509313','Kevin-Alexander Arboleda Angulo','7A'],
-['C005509325','Firas Salih','7A'],['C005509331','Emil Brinkmark','7A'],['C005509375','Liam Diaz Sjöstrand','7A'],
-['C005509376','Anna Furgala Wretström','7A'],['C005509377','Chimdalu Okwo','7A'],['C005509389','Amira Ahmed Ibrahim','7A'],
-['C005509391','Vian Shikh Kanbar','7A'],['C005509396','Gazel Dawad','7A'],['C005509401',"Adam O'Callaghan",'7A'],
-['C005509435','Bence Acsádi','7A'],['C005547804','Brielle Jagerholm','7A'],
-['C005508980','Aiza Chaudhry','7B'],['C005508987','Isak Skotth','7B'],['C005508989','Layan Nakawa','7B'],
-['C005508995','Maya El Awad','7B'],['C005508996','Oubada Ayash','7B'],['C005509000','Yasmin Ibrahim','7B'],
-['C005509001','Elliott Pendlebury','7B'],['C005509004','Sibt Muhamad Yassin','7B'],['C005509005','Yasiin Abdimalik','7B'],
-['C005509006','Ahmed Hassan','7B'],['C005509015','Danial Julaei','7B'],['C005509016','Malek Alkhatib','7B'],
-['C005509017','Maandeeq Osman','7B'],['C005509020','Vincent Buchholz','7B'],['C005509151','Sky Lim Castillo','7B'],
-['C005509163','William Halvarsson','7B'],['C005509172','Ahmad Arif','7B'],['C005509315','Layan Al Kattan','7B'],
-['C005509318','Angela Lozano Quintero','7B'],['C005509329','Ridwan Abukar Omer','7B'],['C005509382','Fatima Aljawaheri','7B'],
-['C005509392','Alisa Rais','7B'],['C005509405','Loke Sjöberg Lodesten','7B'],['C005509413','Taminah Careloria Poblete','7B'],
-['C005509416','Marcel La Gioia','7B'],['C005509418','Yehia Hassan','7B'],['C005509419','Veronica Amigo Adolfsson','7B'],
-['C005509427','Arsema Bogale','7B'],['C005509429','Mohammad Rashid','7B'],['C005648070','Laya Irfan','7B'],
-['C005508975','Blessing Adonai','7C'],['C005508977','Briella Ukiza','7C'],['C005508978','Darya Hawas','7C'],
-['C005508981','Alice Granberg','7C'],['C005508988','Tanem Garib','7C'],['C005508991','Abdourahman Niass','7C'],
-['C005508992','Muhammad Hasnain','7C'],['C005508993','Bylsan Ataia','7C'],['C005508994','Penar Murad','7C'],
-['C005509002','Alessia Caspari Bark','7C'],['C005509003','Saya Fateh','7C'],['C005509012','Kurubel Gebrehiwet','7C'],
-['C005509013','M-Yahya Salami','7C'],['C005509014','Samuel Andemichael','7C'],['C005509021','Diego Imuetinyan','7C'],
-['C005509332','Loke Heldemar','7C'],['C005509339','Humphrey Ezeora','7C'],['C005509379','Obada Mohammed Deab Shawaheen','7C'],
-['C005509388','Yosef Ghanim','7C'],['C005509393','Freya Sankilampi Öst','7C'],['C005509398','Zaina Hraishat','7C'],
-['C005509404','Chloe Norman','7C'],['C005509410','Diana Ugur','7C'],['C005509411','Liam Isleem','7C'],
-['C005509436','Bawar Soleymanpour','7C'],['C005509437','Kalil Mohamud','7C'],
-['C005508985','Christian Pretorius','8A'],['C005509024','Sashwath Mohan','8A'],['C005509027','Mohamad Ali','8A'],
-['C005509038','Youstina Habte','8A'],['C005509039','Malak Said','8A'],['C005509046','Chakir Abou El Faraj','8A'],
-['C005509052','Roz Khoshnaw','8A'],['C005509057','Abdel Ayash','8A'],['C005509109','Abdulrahman Demashki','8A'],
-['C005509115','Muzayan Aljundi','8A'],['C005509126','Maida Qasim','8A'],['C005509140','Tristan Wenner Ekekrantz','8A'],
-['C005509160','Marwa Ahmed','8A'],['C005509162','Sai Majeti','8A'],['C005509171','Aisha Arif','8A'],
-['C005509176','Mayar Alwani','8A'],['C005509194','Fatema Basiss','8A'],['C005509197','Shayaan Shabbeer Ahmed','8A'],
-['C005509238','Edvin Eklund','8A'],['C005509240','Mehdi Aljawaheri','8A'],['C005509244','Darlington Adeyefa','8A'],
-['C005509280','Akram Abdulmohsen Abdulmajid','8A'],['C005509285','Victorien Peujio Saucedo','8A'],
-['C005509298','Yassin Ammar','8A'],['C005509308','Hadi Kabor','8A'],['C005509309','Erik Persson','8A'],
-['C005509326','Hibba Khan','8A'],['C005509338','Rakia Abukar Omer','8A'],['C005509423','Sara Sheikh Yusuf','8A'],
-['C005509425','Warisha IESV','8A'],
-['C005508973','Abedalrahman Ahmed','8B'],['C005509037','Yelyzaveta Sarnavska','8B'],['C005509053','Laith Alattari','8B'],
-['C005509055','Hanna Lindberg','8B'],['C005509110','Lara Hussein','8B'],['C005509116','Dilara Al Muhammad','8B'],
-['C005509117','Aisha Alrfai','8B'],['C005509134','Metin Mohammed','8B'],['C005509135','Hasan Khateeb','8B'],
-['C005509136','Nikole Kerdman','8B'],['C005509137','Yann Baranyizigiye','8B'],['C005509139','Lina Faraj','8B'],
-['C005509141','Elsa Partridge','8B'],['C005509145','Benhur Nesredin','8B'],['C005509152','Merna Abdellatif','8B'],
-['C005509159','Ahmad Murad','8B'],['C005509164','Akram Mahamed','8B'],['C005509165','Yones Salameh','8B'],
-['C005509168','Kadzuwa Zulu','8B'],['C005509239','Sama Mohammad','8B'],['C005509241','Mina Al-Hasabi','8B'],
-['C005509245','Abdulhakim Sharifabdi','8B'],['C005509278','Alend Mallaali','8B'],['C005509281','Zainab Al-Ansari','8B'],
-['C005509282','Rose-Lina Flaih','8B'],['C005509283','Shadbin Kardo Ahmed','8B'],['C005509304','Lulu Younis','8B'],
-['C005509320','Fatima Salih','8B'],['C005636007','Diana Wahid Taher','8B'],['C005636009','Noel Beregszászi','8B'],
-['C005648071','Ponetta Safar','8B'],
-['C005509011','Abdalkarim Abusulttan','8C'],['C005509029','Rufta Araya','8C'],['C005509040','Aya Said','8C'],
-['C005509041','Edvin Asri','8C'],['C005509042','Sosna Tesfazghi','8C'],['C005509043','Diako Saleyi','8C'],
-['C005509044','Elsa Kadriu','8C'],['C005509045','David Kibreab','8C'],['C005509050','Elias Allak','8C'],
-['C005509051','Shaima Kassim','8C'],['C005509054','Sidra Mukhtar','8C'],['C005509056','Elham Hassan','8C'],
-['C005509061','Majd Yacoub','8C'],['C005509062','Liann Kader','8C'],['C005509064','Felicia Nässén','8C'],
-['C005509067','Leif Almadani','8C'],['C005509068','Nour Lauand','8C'],['C005509069','Melisa Bakir','8C'],
-['C005509138','Mohammed Jabbar','8C'],['C005509158','Madelene Rasho','8C'],['C005509161','Ali Waldbeg','8C'],
-['C005509279','Omar Hreshat','8C'],['C005509284','Yunyi Dong','8C'],['C005509303','Retaj Alalbi','8C'],
-['C005509305','Gyan Mahesh','8C'],['C005509323','Fatima Qasem','8C'],['C005509406','Jozef Anyz','8C'],
-['C005508983','Safir Chellali','9A'],['C005508984','Jakub Palej','9A'],['C005509022','Yahye Abdimalik','9A'],
-['C005509102','Ömer Kuyumcu','9A'],['C005509103','Gabriel Dolinski','9A'],['C005509105','Timo Astala','9A'],
-['C005509118','Lara Alattari','9A'],['C005509120','Serina Alhaj-Khedr','9A'],['C005509125','Zaki Hamed','9A'],
-['C005509149','Daruin Hawezi','9A'],['C005509156','Nada Jowhar','9A'],['C005509157','Kezi Saleyi','9A'],
-['C005509167','Hamza Abdulahi','9A'],['C005509174','Karam Mohammad','9A'],['C005509177','Adam Soubhi Mohamed','9A'],
-['C005509184','Emelie Åberg','9A'],['C005509187','Philip Tunell','9A'],['C005509200','Oliver Angbah Elfström','9A'],
-['C005509205','Kessiah Harimenshi','9A'],['C005509208','Maqdis Ahmed','9A'],['C005509211','Besna Omar','9A'],
-['C005509226','Mohamed Muhyaldin','9A'],['C005509229','Ashlynn Irakoze','9A'],['C005509297','Ajdin Muratovic','9A'],
-['C005509306','Cherish Ayot','9A'],['C005509409','Ella Sindrell','9A'],
-['C005509048','Dhaksha Rachannagari','9B'],['C005509060','Noah Dag','9B'],['C005509123','Israa Jwad Kadhem','9B'],
-['C005509131','Ahmad Alnajm','9B'],['C005509132','Noor Maleki','9B'],['C005509133','Adam El Awad','9B'],
-['C005509155','Kevin Pishnamaz','9B'],['C005509170','Zeynab Naseri','9B'],['C005509179','Hermon Araya','9B'],
-['C005509183','Simon Zemariam','9B'],['C005509192','Heli Fors','9B'],['C005509193','Madeleine Kejbert','9B'],
-['C005509199','Sama Arafa','9B'],['C005509202','Linnea Nässén','9B'],['C005509207','Robel Zemeret Weldemariam','9B'],
-['C005509209','Malin Omar','9B'],['C005509210','Mariam Al-Hasabi','9B'],['C005509212','Ali Aldorr Yassin','9B'],
-['C005509213','Basak Hussaini','9B'],['C005509214','Abdullah Iwaimer','9B'],['C005509216','David Özgün','9B'],
-['C005509217','William Willgrén','9B'],['C005509218','Mustafe Sharifabdi','9B'],['C005509220','Muhammad Mirpolatov','9B'],
-['C005509221','Ghena Khdeir','9B'],['C005509225','Layal Safour','9B'],['C005509314','Barkat Abdoulkader','9B'],
-['C005508982','Sumanth Vempati','9C'],['C005509023','Weiron Öhrström','9C'],['C005509028','Mahmud IESV','9C'],
-['C005509031','Aros Goll','9C'],['C005509106','Wissam Tlas','9C'],['C005509108','Manassé Elambi','9C'],
-['C005509114','Mehreen Kolleri Palakkampokkil','9C'],['C005509119','Dima Al-Azzawi','9C'],['C005509122','Jouri Saleh','9C'],
-['C005509143','Aidan Gang','9C'],['C005509150','Layth Jbili','9C'],['C005509175','Gargi Kanchan','9C'],
-['C005509186','Paulina Coppin','9C'],['C005509188','Amir Idrisov','9C'],['C005509189','Sara Hamood','9C'],
-['C005509191','Stacy Lind','9C'],['C005509201','Hossie Tesfazghi','9C'],['C005509203','Ruweda Sami','9C'],
-['C005509206','Victoria Karo','9C'],['C005509223','Chinazom Michael Okeke','9C'],['C005509228','Ruchir Chembeti','9C'],
-['C005509243','Cassandra Staf','9C'],['C005509341','Esha Abia','9C'],
-['C005509030','Veronika Hornostai','9D'],['C005509035','Johana Diaz Ordinola','9D'],['C005509049','Zhivan Mohammed','9D'],
-['C005509107','Asha Ahmed','9D'],['C005509121','Josef Ismail','9D'],['C005509124','Sara Ibrahim','9D'],
-['C005509127','Arad Nourmohamadian','9D'],['C005509128','Marta Rocha Duarte','9D'],['C005509130','Adam Adam','9D'],
-['C005509142','Rugaya Al-Ansari','9D'],['C005509144','Nada Sari','9D'],['C005509146','Anis Yousuf','9D'],
-['C005509147','Alexander Mirhosseini','9D'],['C005509148','Emil Lindblom','9D'],['C005509154','Benin Abbas','9D'],
-['C005509182','Johnny Vuong','9D'],['C005509185','Max Wedberg','9D'],['C005509198','Nooh Abdullahi Abukar','9D'],
-['C005509215','Ahmed Al-Sultan','9D'],['C005509222','Misheel Zolbayar','9D'],['C005509224','Akram Sabri','9D'],
-['C005509227','Joud Qataa','9D'],['C005509242','Muscab Sharifabdi','9D'],
-['C005509295','Pahanya Ekanayake Mudiyanselage','9D'],['C005509296','Fanny Molin','9D'],
-['C005509307','Eda Peujio Saucedo','9D'],['C005509317','Viyan Önen','9D'],['C005509327','Said Abukar Omer','9D']
-];
+
 
 // ─── STORAGE ───────────────────────────────────────────────
 function todayKey(){return new Date().toISOString().slice(0,10)}
 function loadStudents(){
   const s=localStorage.getItem('phc_students');
-  if(s) return JSON.parse(s);
-  const d={};
-  RAW_STUDENTS.forEach(([id,name,cls])=>{d[id]={id,name,cls,active:true}});
-  localStorage.setItem('phc_students',JSON.stringify(d));
-  return d;
+  return s?JSON.parse(s):{};
+}
+function hasStudents(){
+  const s=loadStudents();
+  return Object.values(s).some(x=>x.active);
 }
 function saveStudents(d){localStorage.setItem('phc_students',JSON.stringify(d))}
 function loadLogs(){const s=localStorage.getItem('phc_logs');return s?JSON.parse(s):{}}
@@ -796,6 +719,58 @@ function showToast(msg){
   toastTimer=setTimeout(()=>t.classList.remove('show'),2200);
 }
 
+// ─── CSV UPLOAD ────────────────────────────────────────────
+function showUploadScreen(){
+  document.getElementById('uploadScreen').style.display='flex';
+}
+function hideUploadScreen(){
+  document.getElementById('uploadScreen').style.display='none';
+}
+function handleCSVUpload(input){
+  const file=input.files[0];
+  if(!file) return;
+  const reader=new FileReader();
+  reader.onload=function(e){
+    const text=e.target.result;
+    const lines=text.trim().split(/
+?
+/);
+    const students={};
+    let skipped=0;
+    lines.forEach((line,i)=>{
+      if(i===0&&line.toLowerCase().startsWith('id')) return; // skip header
+      const parts=line.split(',').map(s=>s.replace(/^"|"$/g,'').trim());
+      if(parts.length<3) return;
+      const [id,name,cls]=parts;
+      if(!id||!name||!cls){skipped++;return}
+      students[id]={id,name:name,cls:cls,active:true};
+    });
+    const count=Object.keys(students).length;
+    if(count===0){document.getElementById('uploadError').textContent='No valid rows found. Check the format.';return}
+    saveStudents(students);
+    hideUploadScreen();
+    showToast(`Loaded ${count} students`);
+    renderDash();
+  };
+  reader.readAsText(file);
+}
+function downloadTemplate(){
+  const csv='ID,Name,Class
+C005508976,Anton Larsson,7A
+C005508979,Mias Hiji,7A';
+  const a=document.createElement('a');
+  a.href='data:text/csv;charset=utf-8,'+encodeURIComponent(csv);
+  a.download='students-template.csv';
+  a.click();
+}
+function clearStudentData(){
+  if(!confirm('Remove all student data from this device? Incident logs will also be cleared.')) return;
+  localStorage.removeItem('phc_students');
+  localStorage.removeItem('phc_logs');
+  showToast('Data cleared');
+  showUploadScreen();
+}
+
 // ─── EXPORT ────────────────────────────────────────────────
 function exportCSV(){
   const students=loadStudents();
@@ -821,6 +796,7 @@ function exportCSV(){
 }
 
 // ─── INIT ──────────────────────────────────────────────────
+if(!hasStudents()) showUploadScreen();
 renderDash();
 </script>
 </body>
