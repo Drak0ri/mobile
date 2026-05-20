@@ -198,7 +198,7 @@ document.addEventListener('keydown',e=>{
     <div style="font-size:13px;color:var(--text2);margin-bottom:1.5rem;line-height:1.6">Upload a CSV file to get started. Data is stored locally on this device only and never sent anywhere.</div>
     <div style="background:var(--surface);border:0.5px solid var(--border2);border-radius:var(--radius-lg);padding:14px;margin-bottom:1rem;text-align:left">
       <div style="font-size:12px;color:var(--text2);margin-bottom:6px;text-transform:uppercase;letter-spacing:0.04em">Expected CSV format</div>
-      <code style="font-size:12px;font-family:'DM Mono',monospace;color:var(--text);line-height:1.7;display:block">ID,Name,Class<br>C005508976,Anton Larsson,7A<br>C005508979,Mias Hiji,7A</code>
+      <code style="font-size:12px;font-family:'DM Mono',monospace;color:var(--text);line-height:1.7;display:block">ID,Name,Class<br>C000000001,Erik Lindqvist,7A<br>C000000002,Maja Söderström,7B</code>
     </div>
     <div style="display:flex;gap:8px;justify-content:center;flex-wrap:wrap">
       <label class="btn" style="cursor:pointer"><i class="ti ti-upload" aria-hidden="true"></i>Upload CSV<input type="file" accept=".csv" style="display:none" onchange="handleCSVUpload(this)"></label>
@@ -785,7 +785,7 @@ function handleCSVUpload(input){
   reader.readAsText(file);
 }
 function downloadTemplate(){
-  const csv='ID,Name,Class\nC005508976,Anton Larsson,7A\nC005508979,Mias Hiji,7A';
+  const csv='ID,Name,Class\nC000000001,Erik Lindqvist,7A\nC000000002,Maja Söderström,7B';
   const a=document.createElement('a');
   a.href='data:text/csv;charset=utf-8,'+encodeURIComponent(csv);
   a.download='students-template.csv';
