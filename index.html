@@ -262,6 +262,7 @@ document.addEventListener('keydown',e=>{
       <select id="studentClassFilter" onchange="renderStudentList()" style="height:36px">
         <option value="ALL">All classes</option>
       </select>
+      <label class="btn" style="cursor:pointer" title="Replace student list without clearing incident logs"><i class="ti ti-upload" aria-hidden="true"></i>Re-upload students<input type="file" accept=".csv" style="display:none" onchange="handleCSVUpload(this)"></label>
       <button class="btn danger" onclick="clearStudentData()" title="Remove all student data from this device"><i class="ti ti-database-off" aria-hidden="true"></i>Clear data</button>
     </div>
     <div id="studentListContent"></div>
