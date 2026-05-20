@@ -758,21 +758,31 @@ function handleCSVUpload(input){
 ?
 /);
     const students={};
-    let skipped=0;
     lines.forEach((line,i)=>{
-      if(i===0&&line.toLowerCase().startsWith('id')) return; // skip header
-      const parts=line.split(',').map(s=>s.replace(/^"|"$/g,'').trim());
+      if(i===0&&line.toLowerCase().startsWith('id')) return;
+      const parts=[];
+      let cur='';let inQ=false;
+      for(let c of line){
+        if(c==='"'){inQ=!inQ;}
+        else if(c===','&&!inQ){parts.push(cur.trim());cur='';}
+        else cur+=c;
+      }
+      parts.push(cur.trim());
       if(parts.length<3) return;
-      const [id,name,cls]=parts;
-      if(!id||!name||!cls){skipped++;return}
-      students[id]={id,name:name,cls:cls,active:true};
+      const id=parts[0].replace(/^"|"$/g,'').trim();
+      const cls=parts[parts.length-1].replace(/^"|"$/g,'').trim();
+      const name=parts.slice(1,parts.length-1).join(' ').replace(/^"|"$/g,'').trim();
+      if(!id||!name||!cls) return;
+      students[id]={id,name,cls,active:true};
     });
     const count=Object.keys(students).length;
-    if(count===0){document.getElementById('uploadError').textContent='No valid rows found. Check the format.';return}
+    if(count===0){showToast('No valid rows found - check format');return}
     saveStudents(students);
     hideUploadScreen();
-    showToast(`Loaded ${count} students`);
+    showToast('Loaded '+count+' students');
     renderDash();
+    renderStudentList();
+    input.value='';
   };
   reader.readAsText(file);
 }
